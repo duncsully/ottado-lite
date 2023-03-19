@@ -18,6 +18,7 @@ import { AccountCircle } from '@mui/icons-material'
 import { DefaultOtto } from '../Otto/DefaultOtto'
 import { useState, type FC } from 'react'
 import { ConcernsPage } from './ConcernsPage/ConcernsPage'
+import { DefinePage } from './DefinePage/DefinePage'
 
 // TODO: Replace bottom nav with FAB?
 
@@ -27,8 +28,12 @@ export const HomeLayout: FC = () => {
     setAnchorEl(null)
   }
 
-  // TODO: Change to be hash based
-  const [selectedIndex, setSelectedIndex] = useState(0)
+  const startingIndex = ['#next-actions', '#concerns', '#define'].indexOf(
+    window.location.hash
+  )
+  const [selectedIndex, setSelectedIndex] = useState(
+    startingIndex === -1 ? 0 : startingIndex
+  )
 
   return (
     <Paper
@@ -91,7 +96,7 @@ export const HomeLayout: FC = () => {
       </Box>
       <Box sx={{ p: 2, pb: 9, flexGrow: 2, overflow: 'auto' }}>
         {
-          [<div>Next Actions</div>, <ConcernsPage />, <div>Define</div>][
+          [<div>Next Actions</div>, <ConcernsPage />, <DefinePage />][
             selectedIndex
           ]
         }
@@ -109,9 +114,18 @@ export const HomeLayout: FC = () => {
           <BottomNavigationAction
             label="Next Actions"
             icon={<PendingActionsIcon />}
+            href="#next-actions"
           />
-          <BottomNavigationAction label="Concerns" icon={<NotesIcon />} />
-          <BottomNavigationAction label="Define" icon={<CreateIcon />} />
+          <BottomNavigationAction
+            label="Concerns"
+            icon={<NotesIcon />}
+            href="#concerns"
+          />
+          <BottomNavigationAction
+            label="Define"
+            icon={<CreateIcon />}
+            href="#define"
+          />
         </BottomNavigation>
       </Paper>
     </Paper>
