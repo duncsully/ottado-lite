@@ -1,18 +1,11 @@
 import {
   Box,
-  IconButton,
-  InputAdornment,
   List,
-  ListItem,
-  ListItemText,
-  OutlinedInput,
-  Paper,
   Skeleton,
   Stack,
   TextField,
   Typography,
 } from '@mui/material'
-import ClearIcon from '@mui/icons-material/Clear'
 import { useRef, useState } from 'react'
 import { HappyOtto } from '../../Otto/HappyOtto'
 import { useLiveQuery } from 'dexie-react-hooks'
@@ -21,7 +14,6 @@ import { ConcernItem } from './ConcernItem/ConcernItem'
 
 /*
 TODO:
-- Prevent delete on hidden X
 - Style for desktop
 */
 export const ConcernsPage = () => {
