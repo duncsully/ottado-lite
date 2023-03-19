@@ -8,10 +8,10 @@ export class OttaDoDB extends Dexie {
 
   constructor() {
     super('OttaDoDB')
-    this.version(1).stores({
+    this.version(2).stores({
       concerns: '++id, createdAt',
       nextActions: '++id, createdAt, minutesEstimate, effort, priority, tags',
-      tags: '++id, category, usedCount',
+      tags: '++id, name, category, usedCount',
     })
   }
 }

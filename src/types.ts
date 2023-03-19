@@ -9,10 +9,10 @@ export interface NextAction {
   createdAt: number
   title: string
   description: string
-  minutesEstimate: number
+  minutesEstimate?: number
   effort: Effort
   priority: Priority
-  tags: Tag[]
+  tags: string[]
 }
 
 export enum Effort {
