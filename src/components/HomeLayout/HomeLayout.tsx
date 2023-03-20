@@ -19,6 +19,7 @@ import { DefaultOtto } from '../Otto/DefaultOtto'
 import { useState, type FC } from 'react'
 import { ConcernsPage } from './ConcernsPage/ConcernsPage'
 import { DefinePage } from './DefinePage/DefinePage'
+import { NextActionsPage } from './NextActionsPage/NextActionsPage'
 
 // TODO: Replace bottom nav with FAB?
 
@@ -62,7 +63,7 @@ export const HomeLayout: FC = () => {
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               OttaDo
             </Typography>
-            <div>
+            {/* <div>
               <IconButton
                 size="large"
                 aria-label="account of current user"
@@ -90,16 +91,12 @@ export const HomeLayout: FC = () => {
               >
                 <MenuItem onClick={() => {}}>TODO</MenuItem>
               </Menu>
-            </div>
+            </div> */}
           </Toolbar>
         </AppBar>
       </Box>
-      <Box sx={{ p: 2, pb: 9, flexGrow: 2, overflow: 'auto' }}>
-        {
-          [<div>Next Actions</div>, <ConcernsPage />, <DefinePage />][
-            selectedIndex
-          ]
-        }
+      <Box sx={{ p: 2, pt: 1, pb: 9, flexGrow: 2, overflow: 'auto' }}>
+        {[<NextActionsPage />, <ConcernsPage />, <DefinePage />][selectedIndex]}
       </Box>
 
       <Paper
