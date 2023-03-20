@@ -1,6 +1,6 @@
 import { Option } from './types'
 
-export const minuteEstimates = [10, 30, 60, 60 * 2, 60 * 4, 60 * 8]
+export const minuteEstimates = [10, 30, 60, 60 * 2, 60 * 4, 60 * 8] as const
 export const timeEstimateOptions: Option<number>[] = minuteEstimates.map(
   (minutes) => {
     const hours = minutes / 60

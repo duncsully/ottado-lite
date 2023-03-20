@@ -13,6 +13,7 @@ export interface NextAction {
   effort: Effort
   priority: Priority
   tags: string[]
+  completedAt?: number
 }
 
 export enum Effort {
