@@ -51,10 +51,7 @@ export const DefinePage = () => {
   }
 
   return (
-    <Stack
-      gap="1rem"
-      sx={{ height: '100%', padding: '1rem', boxSizing: 'border-box' }}
-    >
+    <Stack gap="1rem">
       {concerns && (
         <>
           <Typography sx={{ alignSelf: 'center' }}>
