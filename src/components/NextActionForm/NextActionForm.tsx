@@ -88,7 +88,7 @@ export const NextActionForm: FC<{
       effort,
       priority,
       tags: selectedTags,
-      createdAt: Date.now(),
+      createdAt: existingAction?.createdAt ?? Date.now(),
       completedAt: 0,
     })
   }
