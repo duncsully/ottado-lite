@@ -89,6 +89,7 @@ export const NextActionForm: FC<{
       priority,
       tags: selectedTags,
       createdAt: Date.now(),
+      completedAt: 0,
     })
   }
   return (

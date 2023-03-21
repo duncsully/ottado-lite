@@ -11,7 +11,7 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       devOptions: { enabled: true },
-      workbox: { globPatterns: ['**/*.{js,css,html,svg}'] },
+      workbox: { globPatterns: ['**/*.{js,css,html,png,svg}'] },
       includeAssets: ['public/defaultOtto.svg'],
       manifest: {
         name: 'OttaDo',
@@ -20,17 +20,17 @@ export default defineConfig({
         theme_color: '#121212',
         icons: [
           {
-            src: 'android-chrome-192x192.png',
+            src: 'public/android-chrome-192x192.png',
             sizes: '192x192',
             type: 'image/png',
           },
           {
-            src: 'android-chrome-512x512.png',
+            src: 'public/android-chrome-512x512.png',
             sizes: '512x512',
             type: 'image/png',
           },
           {
-            src: 'android-chrome-512x512.png',
+            src: 'public/android-chrome-512x512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable',
