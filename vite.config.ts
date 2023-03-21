@@ -5,7 +5,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 // https://vitejs.dev/config/
 export default defineConfig({
   // Deployed on GH pages so we need to set the base to the repo name
-  base: 'ottado-lite',
+  base: '/ottado-lite/',
   plugins: [
     react(),
     VitePWA({
