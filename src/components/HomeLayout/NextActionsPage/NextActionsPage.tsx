@@ -1,9 +1,18 @@
 import {
+  Box,
   Button,
   Chip,
   Collapse,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Divider,
+  IconButton,
   List,
+  Menu,
+  MenuItem,
   Stack,
   Typography,
 } from '@mui/material'
@@ -11,7 +20,7 @@ import { useState } from 'react'
 import { SelectChip } from './SelectChip/SelectChip'
 import { timeEstimateOptions } from '../../../options'
 import { Effort, NextAction, Option, Tag } from '../../../types'
-import { ExpandMore, FilterList } from '@mui/icons-material'
+import { ExpandMore, FilterList, MoreVert } from '@mui/icons-material'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../../../db'
 import { NextActionForm } from '../../NextActionForm/NextActionForm'
@@ -104,6 +113,20 @@ export const NextActionsPage = () => {
 
   const [expanded, setExpanded] = useState(false)
 
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+
+  const handleDelete = () => {
+    db.nextActions.delete(viewingAction!.id!)
+    handleClose()
+    setViewingAction(undefined)
+    setDeleteDialogOpen(false)
+  }
+
   return (
     <Stack>
       {!viewingAction ? (
@@ -157,7 +180,7 @@ export const NextActionsPage = () => {
                 onClick={() => setExpanded((prev) => !prev)}
               >
                 <ExpandMore
-                  style={{
+                  sx={{
                     transition: '0.5s',
                     transform: expanded ? 'rotateX(180deg)' : undefined,
                   }}
@@ -185,15 +208,66 @@ export const NextActionsPage = () => {
           )}
         </>
       ) : (
-        <NextActionForm
-          existingAction={viewingAction}
-          onCancel={() => setViewingAction(undefined)}
-          onSubmit={(updatedNextAction) => {
-            db.nextActions.update(viewingAction.id!, updatedNextAction)
-            setViewingAction(undefined)
-          }}
-        />
+        <Stack gap={1}>
+          <Box sx={{ ml: 'auto' }}>
+            <IconButton
+              aria-haspopup="true"
+              onClick={(e) => setAnchorEl(e.currentTarget)}
+            >
+              <MoreVert />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={!!anchorEl}
+              onClose={handleClose}
+            >
+              <MenuItem
+                onClick={() => {
+                  setDeleteDialogOpen(true)
+                  handleClose()
+                }}
+              >
+                Delete
+              </MenuItem>
+            </Menu>
+          </Box>
+
+          <NextActionForm
+            existingAction={viewingAction}
+            onCancel={() => setViewingAction(undefined)}
+            onSubmit={(updatedNextAction) => {
+              db.nextActions.update(viewingAction.id!, updatedNextAction)
+              setViewingAction(undefined)
+            }}
+          />
+        </Stack>
       )}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+      >
+        <DialogTitle>Delete this next action?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            You won't be able to recover this next action if you delete it.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleDelete} autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Stack>
   )
 }
