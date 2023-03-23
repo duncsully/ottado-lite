@@ -1,19 +1,17 @@
 import {
   Button,
-  Card,
-  Checkbox,
   Chip,
+  Collapse,
   Divider,
   List,
-  ListItem,
-  ListItemText,
   Stack,
+  Typography,
 } from '@mui/material'
 import { useState } from 'react'
 import { SelectChip } from './SelectChip/SelectChip'
 import { timeEstimateOptions } from '../../../options'
 import { Effort, NextAction, Option, Tag } from '../../../types'
-import { FilterList } from '@mui/icons-material'
+import { ExpandMore, FilterList } from '@mui/icons-material'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../../../db'
 import { NextActionForm } from '../../NextActionForm/NextActionForm'
@@ -21,7 +19,7 @@ import { NextActionItem } from './NextActionItem/NextActionItem'
 
 // TODO: support arbitrary tags
 // TODO: empty message and no next actions with current filters message
-// TODO: Expandable for completed items
+// TODO: Transitions?
 
 // TODO: Consolidate this with the effortItems in NextActionForm.tsx
 const effortOptions: Option<number>[] = Object.entries(Effort).reduce(
@@ -104,6 +102,8 @@ export const NextActionsPage = () => {
       .sortBy('completedAt')
   })
 
+  const [expanded, setExpanded] = useState(false)
+
   return (
     <Stack>
       {!viewingAction ? (
@@ -147,16 +147,42 @@ export const NextActionsPage = () => {
           <Button onClick={handleNewOptions} sx={{ alignSelf: 'flex-end' }}>
             New Options
           </Button>
-          <Divider sx={{ my: 1 }} />
-          {completedTodayNextActions?.map((nextAction) => (
-            <NextActionItem
-              key={nextAction.id}
-              nextAction={nextAction}
-              onToggle={() => handleToggle(nextAction)}
-              onClick={() => setViewingAction(nextAction)}
-              checked
-            />
-          ))}
+          <Divider sx={{ my: 2 }} />
+          {completedTodayNextActions?.length ? (
+            <>
+              <Stack
+                direction="row"
+                gap="8px"
+                my={1}
+                onClick={() => setExpanded((prev) => !prev)}
+              >
+                <ExpandMore
+                  style={{
+                    transition: '0.5s',
+                    transform: expanded ? 'rotateX(180deg)' : undefined,
+                  }}
+                />
+                <Typography>
+                  {completedTodayNextActions?.length} finished today
+                </Typography>
+              </Stack>
+              <Collapse in={expanded}>
+                <List disablePadding>
+                  {completedTodayNextActions?.map((nextAction) => (
+                    <NextActionItem
+                      key={nextAction.id}
+                      nextAction={nextAction}
+                      onToggle={() => handleToggle(nextAction)}
+                      onClick={() => setViewingAction(nextAction)}
+                      checked
+                    />
+                  ))}
+                </List>
+              </Collapse>
+            </>
+          ) : (
+            <Typography>No next actions completed today</Typography>
+          )}
         </>
       ) : (
         <NextActionForm
