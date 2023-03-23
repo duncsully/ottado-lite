@@ -4,7 +4,7 @@ import {
   ListItem,
   OutlinedInput,
 } from '@mui/material'
-import { useState, type FC } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type FC } from 'react'
 import { Delete } from '@mui/icons-material'
 
 // TODO: Only show delete button when focused
@@ -30,6 +30,17 @@ export const ConcernItem: FC<{
     setValue(initialValue)
     setFocused(false)
   }
+
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  // TODO: improve scroll, doesn't go to bottom
+  useLayoutEffect(() => {
+    inputRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    })
+  }, [])
+
   return (
     <ListItem
       disableGutters
@@ -39,6 +50,7 @@ export const ConcernItem: FC<{
     >
       <OutlinedInput
         multiline
+        placeholder="What's on your mind?"
         value={value}
         onChange={(e) => setValue(e.target.value)}
         size="small"
@@ -46,9 +58,10 @@ export const ConcernItem: FC<{
         onKeyDown={handleEditKeyDown}
         onFocus={() => setFocused(true)}
         onBlur={handleBlur}
+        autoFocus={!initialValue}
         endAdornment={
           <InputAdornment position="end">
-            <IconButton edge="end" disabled={!focused} onClick={onDelete}>
+            <IconButton edge="end" onClick={onDelete}>
               <Delete />
             </IconButton>
           </InputAdornment>
@@ -56,6 +69,7 @@ export const ConcernItem: FC<{
         sx={{
           backgroundColor: 'rgba(138, 138, 143, 0.2)',
         }}
+        ref={inputRef}
       />
     </ListItem>
   )

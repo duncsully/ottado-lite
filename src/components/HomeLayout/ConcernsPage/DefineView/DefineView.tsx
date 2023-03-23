@@ -1,16 +1,15 @@
-import { Button, Card, IconButton, Stack, Typography } from '@mui/material'
-import { useState } from 'react'
-import { NextActionForm } from '../../NextActionForm/NextActionForm'
+import { Card, IconButton, Stack, Typography } from '@mui/material'
+import { FC, useEffect } from 'react'
+import { NextActionForm } from '../../../NextActionForm/NextActionForm'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { db } from '../../../db'
-import { NextAction } from '../../../types'
+import { db } from '../../../../db'
+import { NextAction } from '../../../../types'
 import { Delete } from '@mui/icons-material'
 
 /* TODO
-- Empty page
 - Add to calendar
 */
-export const DefinePage = () => {
+export const DefineView: FC<{ onCancel(): void }> = ({ onCancel }) => {
   const concerns = useLiveQuery(() => db.concerns.toArray())
 
   const topConcern = concerns?.[0]
@@ -18,7 +17,6 @@ export const DefinePage = () => {
   const handleDelete = async () => {
     if (!topConcern) return
     db.concerns.delete(topConcern.id!)
-    setDefining(false)
   }
 
   const handleSubmit = async (nextAction: NextAction) => {
@@ -39,15 +37,6 @@ export const DefinePage = () => {
         db.concerns.delete(topConcern.id!),
       ])
     })
-    setDefining(false)
-  }
-
-  const [defining, setDefining] = useState(false)
-  const handleDefine = () => {
-    setDefining(true)
-  }
-  const handleCancel = () => {
-    setDefining(false)
   }
 
   return (
@@ -73,21 +62,11 @@ export const DefinePage = () => {
               </IconButton>
             </Stack>
           </Card>
-          {!defining ? (
-            <Stack direction="row" justifyContent="space-between">
-              <Button variant="text">Add to calendar</Button>
-              <Button
-                variant="contained"
-                color="primary"
-                sx={{ borderRadius: '20px' }}
-                onClick={handleDefine}
-              >
-                Define next action
-              </Button>
-            </Stack>
-          ) : (
-            <NextActionForm onSubmit={handleSubmit} onCancel={handleCancel} />
-          )}
+          <NextActionForm
+            onSubmit={handleSubmit}
+            onCancel={onCancel}
+            key={topConcern?.id}
+          />
         </>
       )}
     </Stack>

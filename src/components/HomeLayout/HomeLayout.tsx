@@ -12,29 +12,38 @@ import {
 } from '@mui/material'
 import PendingActionsIcon from '@mui/icons-material/PendingActions'
 import NotesIcon from '@mui/icons-material/Notes'
-import CreateIcon from '@mui/icons-material/Create'
 import MenuIcon from '@mui/icons-material/Menu'
 import { AccountCircle } from '@mui/icons-material'
 import { DefaultOtto } from '../Otto/DefaultOtto'
-import { useState, type FC } from 'react'
+import { useEffect, useState, type FC } from 'react'
 import { ConcernsPage } from './ConcernsPage/ConcernsPage'
-import { DefinePage } from './DefinePage/DefinePage'
 import { NextActionsPage } from './NextActionsPage/NextActionsPage'
 
-// TODO: Replace bottom nav with FAB?
+const getPageFromHash = () => {
+  const pages = {
+    '#next-actions': <NextActionsPage />,
+    '#concerns': <ConcernsPage />,
+  } as { [key: string]: JSX.Element }
+  return pages[window.location.hash] ?? pages['#next-actions']
+}
 
 export const HomeLayout: FC = () => {
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
+  /* const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const handleClose = () => {
     setAnchorEl(null)
-  }
+  } */
 
-  const startingIndex = ['#next-actions', '#concerns', '#define'].indexOf(
-    window.location.hash
-  )
-  const [selectedIndex, setSelectedIndex] = useState(
-    startingIndex === -1 ? 0 : startingIndex
-  )
+  const [page, setPage] = useState(getPageFromHash())
+
+  useEffect(() => {
+    const hashChangeHandler = () => {
+      setPage(getPageFromHash())
+    }
+    window.addEventListener('hashchange', hashChangeHandler)
+    return () => {
+      window.removeEventListener('hashchange', hashChangeHandler)
+    }
+  }, [])
 
   return (
     <Paper
@@ -96,32 +105,25 @@ export const HomeLayout: FC = () => {
         </AppBar>
       </Box>
       <Box sx={{ p: 2, pt: 1, pb: 9, flexGrow: 2, overflow: 'auto' }}>
-        {[<NextActionsPage />, <ConcernsPage />, <DefinePage />][selectedIndex]}
+        {page}
       </Box>
 
       <Paper
         sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 10 }}
         elevation={3}
       >
-        <BottomNavigation
-          showLabels
-          value={selectedIndex}
-          onChange={(_, newIndex) => setSelectedIndex(newIndex)}
-        >
+        <BottomNavigation showLabels value={window.location.hash}>
           <BottomNavigationAction
             label="Next Actions"
             icon={<PendingActionsIcon />}
             href="#next-actions"
+            value="#next-actions"
           />
           <BottomNavigationAction
             label="Concerns"
             icon={<NotesIcon />}
             href="#concerns"
-          />
-          <BottomNavigationAction
-            label="Define"
-            icon={<CreateIcon />}
-            href="#define"
+            value="#concerns"
           />
         </BottomNavigation>
       </Paper>

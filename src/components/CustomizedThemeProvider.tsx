@@ -25,6 +25,13 @@ export const CustomizedThemeProvider: FC<{
               },
             },
           },
+          MuiButton: {
+            styleOverrides: {
+              root: {
+                borderRadius: '20px',
+              },
+            },
+          },
         },
       }),
     [prefersDarkMode]

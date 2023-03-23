@@ -3,6 +3,7 @@ import {
   Card,
   Checkbox,
   Chip,
+  Divider,
   List,
   ListItem,
   ListItemText,
@@ -16,10 +17,11 @@ import { FilterList } from '@mui/icons-material'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../../../db'
 import { NextActionForm } from '../../NextActionForm/NextActionForm'
+import { NextActionItem } from './NextActionItem/NextActionItem'
 
 // TODO: support arbitrary tags
-// TODO: check off actions with toast message with undo action on check
 // TODO: empty message and no next actions with current filters message
+// TODO: Expandable for completed items
 
 // TODO: Consolidate this with the effortItems in NextActionForm.tsx
 const effortOptions: Option<number>[] = Object.entries(Effort).reduce(
@@ -70,16 +72,37 @@ export const NextActionsPage = () => {
       )
   }, [timeEstimate, effort])
 
-  // use filteredNextActions as circular buffer and calculate index with modulo
-  const nextActionsLength = filteredNextActions?.length ?? 0
-  const nextActionsIndex = index % nextActionsLength
+  const showingNextActions = filteredNextActions?.slice(index, index + 2) ?? []
 
-  const showingNextActions =
-    filteredNextActions?.slice(nextActionsIndex, nextActionsIndex + 2) ?? []
+  const handleNewOptions = () => {
+    const nextActionsLength = filteredNextActions?.length ?? 0
+    setIndex((index) => {
+      if (index >= nextActionsLength - 2) {
+        return 0
+      }
+      return index + 2
+    })
+  }
 
   const [viewingAction, setViewingAction] = useState<NextAction | undefined>(
     undefined
   )
+
+  const handleToggle = (nextAction: NextAction) => {
+    db.nextActions.update(nextAction.id!, {
+      completedAt: nextAction.completedAt ? 0 : Date.now(),
+    })
+  }
+
+  const completedTodayNextActions = useLiveQuery(async () => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    return await db.nextActions
+      .where('completedAt')
+      .aboveOrEqual(today.getTime())
+      .reverse()
+      .sortBy('completedAt')
+  })
 
   return (
     <Stack>
@@ -113,36 +136,27 @@ export const NextActionsPage = () => {
           </Stack>
           <List disablePadding>
             {showingNextActions.map((nextAction) => (
-              <ListItem key={nextAction.id} disableGutters>
-                <Checkbox edge="start" sx={{ mr: 1 }} />
-                <Card
-                  elevation={5}
-                  sx={{ borderRadius: '15px', p: 2, width: '100%' }}
-                  onClick={() => setViewingAction(nextAction)}
-                >
-                  <ListItemText
-                    primary={nextAction.title}
-                    secondary={nextAction.description}
-                    secondaryTypographyProps={{
-                      sx: {
-                        display: '-webkit-box',
-                        WebkitBoxOrient: 'vertical',
-                        WebkitLineClamp: 2,
-                        overflow: 'hidden',
-                      },
-                    }}
-                    sx={{ m: 0 }}
-                  />
-                </Card>
-              </ListItem>
+              <NextActionItem
+                key={nextAction.id}
+                nextAction={nextAction}
+                onToggle={() => handleToggle(nextAction)}
+                onClick={() => setViewingAction(nextAction)}
+              />
             ))}
           </List>
-          <Button
-            onClick={() => setIndex((i) => i + 2)}
-            sx={{ alignSelf: 'flex-end' }}
-          >
+          <Button onClick={handleNewOptions} sx={{ alignSelf: 'flex-end' }}>
             New Options
           </Button>
+          <Divider sx={{ my: 1 }} />
+          {completedTodayNextActions?.map((nextAction) => (
+            <NextActionItem
+              key={nextAction.id}
+              nextAction={nextAction}
+              onToggle={() => handleToggle(nextAction)}
+              onClick={() => setViewingAction(nextAction)}
+              checked
+            />
+          ))}
         </>
       ) : (
         <NextActionForm

@@ -1,16 +1,10 @@
-import {
-  Box,
-  List,
-  Skeleton,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material'
-import { useRef, useState } from 'react'
+import { Button, List, Stack, Typography } from '@mui/material'
+import { useState } from 'react'
 import { HappyOtto } from '../../Otto/HappyOtto'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../../../db'
 import { ConcernItem } from './ConcernItem/ConcernItem'
+import { DefineView } from './DefineView/DefineView'
 
 /*
 TODO:
@@ -18,110 +12,77 @@ TODO:
 */
 export const ConcernsPage = () => {
   const concerns = useLiveQuery(() => db.concerns.toArray())
-  const loading = concerns === undefined
-  const [newConcern, setNewConcern] = useState('')
 
-  const listRef = useRef<HTMLUListElement>(null)
-
-  const scrollTo = () => {
-    listRef.current?.scrollTo(0, listRef.current?.scrollHeight)
-  }
-
-  const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    setNewConcern(e.target.value)
-  }
-
-  const handleKeyDown: React.KeyboardEventHandler = async (e) => {
-    if (e.key === 'Enter' && newConcern.trim()) {
-      try {
-        await db.concerns.add({
-          text: newConcern,
-          createdAt: Date.now(),
-        })
-        setNewConcern('')
-        // TODO: Improve this
-        // Need page to refresh with new data
-        setTimeout(scrollTo, 50)
-      } catch (e) {
-        console.error(e)
-        throw e
-      }
-    }
+  const handleAdd = async (text: string) => {
+    await db.concerns.add({ text, createdAt: Date.now() })
+    setNewConcernKey((prev) => prev + 1)
   }
 
   const handleDelete = async (id: number) => {
-    try {
-      await db.concerns.delete(id)
-    } catch (e) {
-      console.error(e)
-      throw e
-    }
+    await db.concerns.delete(id)
   }
 
   const handleEditDone = async (id: number, newValue: string) => {
-    if (newValue) {
-      try {
-        await db.concerns.update(id, { text: newValue })
-      } catch (e) {
-        console.error(e)
-        throw e
-      }
+    if (newValue.trim()) {
+      await db.concerns.update(id, { text: newValue })
     }
   }
 
-  // TODO: Improve calculation
-  const skeletonItemsAmount = Math.floor(
-    (listRef.current?.scrollHeight ?? 0) / 38
-  )
+  const [newConcernKey, setNewConcernKey] = useState(0)
+
+  const [defining, setDefining] = useState(false)
+
+  if (!concerns) return null
 
   return (
-    <Stack sx={{ height: '100%' }} justifyContent="space-between">
-      {loading ? (
-        Array.from({ length: skeletonItemsAmount }).map((_, i) => (
-          <Skeleton
-            key={i}
-            variant="text"
-            height={'32px'}
-            sx={{ margin: ' 4px 16px' }}
-          />
-        ))
-      ) : (
+    <Stack justifyContent="space-between" gap={1}>
+      {defining ? (
+        <DefineView onCancel={() => setDefining(false)} />
+      ) : concerns.length ? (
         <>
-          {concerns.length ? (
-            <List dense sx={{ overflow: 'auto', flexGrow: 1 }} ref={listRef}>
-              {concerns.map((concern) => (
-                <ConcernItem
-                  key={concern.text}
-                  initialValue={concern.text}
-                  onDelete={() => handleDelete(concern.id!)}
-                  onSubmit={(newValue) => handleEditDone(concern.id!, newValue)}
-                />
-              ))}
-            </List>
-          ) : (
-            <Stack
-              sx={{ flexGrow: 1 }}
-              spacing={4}
-              alignItems="center"
-              justifyContent="center"
-            >
-              <HappyOtto />
-              <Typography variant="h5">
-                No concerns at the moment. Add whatever is on your mind!
-              </Typography>
-            </Stack>
-          )}
-          <Box>
-            <TextField
-              label="New concern"
-              variant="filled"
-              value={newConcern}
-              onChange={handleChange}
-              onKeyDown={handleKeyDown}
-              fullWidth
+          <List dense sx={{ overflow: 'auto', flexGrow: 1 }}>
+            {concerns.map((concern) => (
+              <ConcernItem
+                key={concern.id}
+                initialValue={concern.text}
+                onDelete={() => handleDelete(concern.id!)}
+                onSubmit={(newValue) => handleEditDone(concern.id!, newValue)}
+              />
+            ))}
+            <ConcernItem
+              key={newConcernKey}
+              initialValue=""
+              onDelete={() => setNewConcernKey((prev) => prev + 1)}
+              onSubmit={handleAdd}
             />
-          </Box>
+          </List>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ marginLeft: 'auto' }}
+            onClick={() => setDefining(true)}
+          >
+            Start defining
+          </Button>
         </>
+      ) : (
+        <Stack
+          sx={{ flexGrow: 1 }}
+          spacing={4}
+          alignItems="center"
+          justifyContent="center"
+        >
+          <HappyOtto />
+          <Typography variant="h5">
+            No concerns at the moment. Add whatever is on your mind!
+          </Typography>
+          <ConcernItem
+            key={newConcernKey}
+            initialValue=""
+            onDelete={() => setNewConcernKey((prev) => prev + 1)}
+            onSubmit={handleAdd}
+          />
+        </Stack>
       )}
     </Stack>
   )
