@@ -35,7 +35,7 @@ export const ConcernsPage = () => {
   if (!concerns) return null
 
   return (
-    <Stack justifyContent="space-between" gap={1}>
+    <Stack justifyContent="space-between" gap={1} height="100%">
       {defining ? (
         <DefineView onCancel={() => setDefining(false)} />
       ) : concerns.length ? (
