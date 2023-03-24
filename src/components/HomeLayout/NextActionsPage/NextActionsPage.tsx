@@ -216,13 +216,11 @@ export const NextActionsPage = () => {
                 New Options
               </Button>
             </>
-          ) : effort || timeEstimate ? (
-            <Typography sx={{ my: 1 }}>
-              No next actions found with selected filters
-            </Typography>
           ) : (
             <Typography sx={{ my: 1 }}>
-              No next actions found. Define some concerns!
+              {effort || timeEstimate
+                ? 'No next actions found with selected filters'
+                : 'No next actions found. Define some concerns!'}
             </Typography>
           )}
 
