@@ -4,7 +4,7 @@ import {
   ListItem,
   OutlinedInput,
 } from '@mui/material'
-import { useEffect, useLayoutEffect, useRef, useState, type FC } from 'react'
+import { useLayoutEffect, useRef, useState, type FC } from 'react'
 import { Delete } from '@mui/icons-material'
 
 // TODO: Only show delete button when focused
@@ -47,6 +47,8 @@ export const ConcernItem: FC<{
       sx={{
         paddingRight: 0,
       }}
+      onFocus={() => setFocused(true)}
+      onBlur={handleBlur}
     >
       <OutlinedInput
         multiline
@@ -56,15 +58,15 @@ export const ConcernItem: FC<{
         size="small"
         fullWidth
         onKeyDown={handleEditKeyDown}
-        onFocus={() => setFocused(true)}
-        onBlur={handleBlur}
         autoFocus={!initialValue}
         endAdornment={
-          <InputAdornment position="end">
-            <IconButton edge="end" onClick={onDelete}>
-              <Delete />
-            </IconButton>
-          </InputAdornment>
+          focused && (
+            <InputAdornment position="end">
+              <IconButton edge="end" onMouseDown={onDelete}>
+                <Delete />
+              </IconButton>
+            </InputAdornment>
+          )
         }
         sx={{
           backgroundColor: 'rgba(138, 138, 143, 0.2)',

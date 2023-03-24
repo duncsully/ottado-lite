@@ -9,6 +9,7 @@ import { DefineView } from './DefineView/DefineView'
 /*
 TODO:
 - Style for desktop
+- Improve edit (flashes after submitting)
 */
 export const ConcernsPage = () => {
   const concerns = useLiveQuery(() => db.concerns.toArray())
@@ -43,7 +44,7 @@ export const ConcernsPage = () => {
           <List dense sx={{ overflow: 'auto', flexGrow: 1 }}>
             {concerns.map((concern) => (
               <ConcernItem
-                key={concern.id}
+                key={`${concern.id}_${concern.text}`}
                 initialValue={concern.text}
                 onDelete={() => handleDelete(concern.id!)}
                 onSubmit={(newValue) => handleEditDone(concern.id!, newValue)}
