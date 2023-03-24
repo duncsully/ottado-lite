@@ -28,7 +28,6 @@ import { db } from '../../../db'
 import { NextActionForm } from '../../NextActionForm/NextActionForm'
 import { NextActionItem } from './NextActionItem/NextActionItem'
 
-// TODO: empty message and no next actions with current filters message
 // TODO: Transitions?
 // TODO: Common tags across top?
 // TODO: Advanced tag filtering? (All of, Any of, Not, etc.)
@@ -201,19 +200,32 @@ export const NextActionsPage = () => {
               onClick={() => setTagDialogOpen(true)}
             />
           </Stack>
-          <List disablePadding>
-            {showingNextActions.map((nextAction) => (
-              <NextActionItem
-                key={nextAction.id}
-                nextAction={nextAction}
-                onToggle={() => handleToggle(nextAction)}
-                onClick={() => setViewingAction(nextAction)}
-              />
-            ))}
-          </List>
-          <Button onClick={handleNewOptions} sx={{ alignSelf: 'flex-end' }}>
-            New Options
-          </Button>
+          {filteredNextActions?.length ? (
+            <>
+              <List disablePadding>
+                {showingNextActions.map((nextAction) => (
+                  <NextActionItem
+                    key={nextAction.id}
+                    nextAction={nextAction}
+                    onToggle={() => handleToggle(nextAction)}
+                    onClick={() => setViewingAction(nextAction)}
+                  />
+                ))}
+              </List>
+              <Button onClick={handleNewOptions} sx={{ alignSelf: 'flex-end' }}>
+                New Options
+              </Button>
+            </>
+          ) : effort || timeEstimate ? (
+            <Typography sx={{ my: 1 }}>
+              No next actions found with selected filters
+            </Typography>
+          ) : (
+            <Typography sx={{ my: 1 }}>
+              No next actions found. Define some concerns!
+            </Typography>
+          )}
+
           <Divider sx={{ my: 2 }} />
           {completedTodayNextActions?.length ? (
             <>
