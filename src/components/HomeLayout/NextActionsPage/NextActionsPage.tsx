@@ -31,7 +31,6 @@ import { NextActionItem } from './NextActionItem/NextActionItem'
 // TODO: Transitions?
 // TODO: Common tags across top?
 // TODO: Advanced tag filtering? (All of, Any of, Not, etc.)
-// TODO: Add a "Show all" button to show all next actions at once?
 // TODO: Add a location filter?
 
 // TODO: Consolidate this with the effortItems in NextActionForm.tsx
@@ -95,7 +94,11 @@ export const NextActionsPage = () => {
       )
   }, [timeEstimate, effort, selectedTags])
 
-  const showingNextActions = filteredNextActions?.slice(index, index + 2) ?? []
+  const [showAll, setShowAll] = useState(false)
+  const showingNextActions =
+    (showAll
+      ? filteredNextActions
+      : filteredNextActions?.slice(index, index + 2)) ?? []
 
   const handleNewOptions = () => {
     const nextActionsLength = filteredNextActions?.length ?? 0
@@ -212,9 +215,14 @@ export const NextActionsPage = () => {
                   />
                 ))}
               </List>
-              <Button onClick={handleNewOptions} sx={{ alignSelf: 'flex-end' }}>
-                New Options
-              </Button>
+              <Box alignSelf="flex-end">
+                {!showAll && (
+                  <Button onClick={handleNewOptions}>New Options</Button>
+                )}
+                <Button onClick={() => setShowAll((showing) => !showing)}>
+                  {showAll ? 'Show Less' : 'Show All'}
+                </Button>
+              </Box>
             </>
           ) : (
             <Typography sx={{ my: 1 }}>
