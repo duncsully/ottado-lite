@@ -1,4 +1,5 @@
 import {
+  Autocomplete,
   Box,
   Button,
   Chip,
@@ -14,9 +15,10 @@ import {
   Menu,
   MenuItem,
   Stack,
+  TextField,
   Typography,
 } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { SelectChip } from './SelectChip/SelectChip'
 import { timeEstimateOptions } from '../../../options'
 import { Effort, NextAction, Option, Tag } from '../../../types'
@@ -26,9 +28,12 @@ import { db } from '../../../db'
 import { NextActionForm } from '../../NextActionForm/NextActionForm'
 import { NextActionItem } from './NextActionItem/NextActionItem'
 
-// TODO: support arbitrary tags
 // TODO: empty message and no next actions with current filters message
 // TODO: Transitions?
+// TODO: Common tags across top?
+// TODO: Advanced tag filtering? (All of, Any of, Not, etc.)
+// TODO: Add a "Show all" button to show all next actions at once?
+// TODO: Add a location filter?
 
 // TODO: Consolidate this with the effortItems in NextActionForm.tsx
 const effortOptions: Option<number>[] = Object.entries(Effort).reduce(
@@ -46,8 +51,15 @@ export const NextActionsPage = () => {
   const [timeEstimate, setTimeEstimate] = useState<Option<number> | undefined>(
     undefined
   )
-  const [appliedFilters, setAppliedFilters] = useState<Tag[]>([])
+
+  const [tagDialogOpen, setTagDialogOpen] = useState(false)
+  const tags = useLiveQuery(() => db.tags.orderBy('name').toArray(), [])
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([])
   const [index, setIndex] = useState(0)
+
+  useEffect(() => {
+    setIndex(0)
+  }, [timeEstimate, effort, selectedTags])
 
   const filteredNextActions = useLiveQuery(async () => {
     return await db.nextActions
@@ -66,18 +78,23 @@ export const NextActionsPage = () => {
       })
       .toArray()
       .then((nextActions) =>
-        // Sorting by priority asc, then time estimate desc, then effort desc
+        // Sorting by priority asc, then number of matching tags desc, then time estimate desc, then effort desc
         nextActions.sort((a, b) => {
           if (a.priority === b.priority) {
-            if (a.minutesEstimate === b.minutesEstimate) {
-              return b.effort - a.effort
+            const aMatchingTags = countMatchingTags(a, selectedTags)
+            const bMatchingTags = countMatchingTags(b, selectedTags)
+            if (aMatchingTags === bMatchingTags) {
+              if (a.minutesEstimate === b.minutesEstimate) {
+                return b.effort - a.effort
+              }
+              return (b.minutesEstimate ?? 0) - (a.minutesEstimate ?? 0)
             }
-            return (b.minutesEstimate ?? 0) - (a.minutesEstimate ?? 0)
+            return bMatchingTags - aMatchingTags
           }
           return a.priority - b.priority
         })
       )
-  }, [timeEstimate, effort])
+  }, [timeEstimate, effort, selectedTags])
 
   const showingNextActions = filteredNextActions?.slice(index, index + 2) ?? []
 
@@ -94,6 +111,31 @@ export const NextActionsPage = () => {
   const [viewingAction, setViewingAction] = useState<NextAction | undefined>(
     undefined
   )
+
+  const handleSubmit = async (nextAction: NextAction) => {
+    if (!viewingAction) return
+    const previousTags = viewingAction.tags
+    db.transaction('rw', db.nextActions, db.tags, async () => {
+      const tagUpdates = nextAction.tags
+        .filter((tag) => !previousTags.includes(tag))
+        .map((tag) => {
+          const query = db.tags.where('name').equals(tag)
+          return query.count((count) => {
+            if (count === 0) {
+              return db.tags.add({ name: tag, usedCount: 1 })
+            }
+            return query.modify((currentTag) => {
+              currentTag.usedCount++
+            })
+          })
+        })
+      return Promise.all([
+        ...tagUpdates,
+        db.nextActions.update(viewingAction.id!, nextAction),
+      ])
+    })
+    setViewingAction(undefined)
+  }
 
   const handleToggle = (nextAction: NextAction) => {
     db.nextActions.update(nextAction.id!, {
@@ -148,13 +190,15 @@ export const NextActionsPage = () => {
             />
             <Chip
               label={<FilterList />}
-              variant={appliedFilters.length ? 'filled' : 'outlined'}
+              variant={selectedTags.length ? 'filled' : 'outlined'}
+              color={selectedTags.length ? 'secondary' : 'default'}
               sx={{
                 marginLeft: 'auto',
                 '.MuiChip-label': {
                   padding: '0 4px',
                 },
               }}
+              onClick={() => setTagDialogOpen(true)}
             />
           </Stack>
           <List disablePadding>
@@ -244,10 +288,7 @@ export const NextActionsPage = () => {
           <NextActionForm
             existingAction={viewingAction}
             onCancel={() => setViewingAction(undefined)}
-            onSubmit={(updatedNextAction) => {
-              db.nextActions.update(viewingAction.id!, updatedNextAction)
-              setViewingAction(undefined)
-            }}
+            onSubmit={handleSubmit}
           />
         </Stack>
       )}
@@ -268,6 +309,43 @@ export const NextActionsPage = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <Dialog
+        open={tagDialogOpen}
+        onClose={() => setTagDialogOpen(false)}
+        fullWidth
+      >
+        <DialogTitle>Prioritize tags</DialogTitle>
+        <DialogContent>
+          <Autocomplete
+            value={selectedTags}
+            onChange={(_, value) => setSelectedTags(value)}
+            options={tags ?? []}
+            getOptionLabel={(tag) => tag.name}
+            loading={!tags}
+            size="small"
+            fullWidth
+            multiple
+            autoComplete
+            autoHighlight
+            disableCloseOnSelect
+            renderInput={(params) => (
+              <TextField {...params} variant="filled" label="Tags" />
+            )}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setTagDialogOpen(false)}>OK</Button>
+        </DialogActions>
+      </Dialog>
     </Stack>
   )
+}
+
+const countMatchingTags = (nextAction: NextAction, selectedTags: Tag[]) => {
+  return nextAction.tags.reduce((count, tag) => {
+    if (selectedTags.some((selectedTag) => selectedTag.name === tag)) {
+      return count + 1
+    }
+    return count
+  }, 0)
 }

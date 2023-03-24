@@ -50,7 +50,7 @@ const priorityItems = Object.entries(Priority).reduce(
   },
   [] as ReactNode[]
 )
-
+// TODO: Use full screen dialog on mobile?
 export const NextActionForm: FC<{
   existingAction?: NextAction
   onSubmit(nextAction: NextAction): void
