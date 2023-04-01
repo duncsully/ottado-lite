@@ -175,7 +175,7 @@ export const NextActionsPage = () => {
     <Stack>
       {!viewingAction ? (
         <>
-          <Stack direction="row" gap="8px" my={1}>
+          {!!filteredNextActions?.length && !effort && !timeEstimate && <Stack direction="row" gap="8px" my={1}>
             <SelectChip
               label="Effort"
               options={effortOptions}
@@ -202,7 +202,7 @@ export const NextActionsPage = () => {
               }}
               onClick={() => setTagDialogOpen(true)}
             />
-          </Stack>
+          </Stack>}
           {filteredNextActions?.length ? (
             <>
               <List disablePadding>
