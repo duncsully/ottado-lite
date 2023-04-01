@@ -126,6 +126,10 @@ export const NextActionsPage = () => {
     </Stack>
   )
 
+  // --------------------------------------------------------------------------
+  // Showing next actions
+  // --------------------------------------------------------------------------
+
   const filteredNextActions = useMemo(() => {
     return (
       allUncompletedNextActions
@@ -197,12 +201,14 @@ export const NextActionsPage = () => {
           />
         ))}
       </List>
-      <Box alignSelf="flex-end">
-        {!showAll && <Button onClick={handleNewOptions}>New Options</Button>}
-        <Button onClick={() => setShowAll((showing) => !showing)}>
-          {showAll ? 'Show Less' : 'Show All'}
-        </Button>
-      </Box>
+      {filteredNextActions?.length > 2 && (
+        <Box alignSelf="flex-end">
+          {!showAll && <Button onClick={handleNewOptions}>New Options</Button>}
+          <Button onClick={() => setShowAll((showing) => !showing)}>
+            {showAll ? 'Show Less' : 'Show All'}
+          </Button>
+        </Box>
+      )}
     </>
   )
 
