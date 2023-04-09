@@ -345,6 +345,7 @@ export const NextActionsPage = () => {
           direction="row"
           gap="8px"
           my={1}
+          sx={{ cursor: 'pointer' }}
           onClick={() => setExpanded((prev) => !prev)}
         >
           <ExpandMore
