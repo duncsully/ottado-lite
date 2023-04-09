@@ -4,7 +4,7 @@ import { HappyOtto } from '../../Otto/HappyOtto'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../../../db'
 import { ConcernItem } from './ConcernItem/ConcernItem'
-import { DefineView } from './DefineView/DefineView'
+import { DefineDialog } from './DefineDialog/DefineDialog'
 
 /*
 TODO:
@@ -31,60 +31,64 @@ export const ConcernsPage = () => {
 
   const [newConcernKey, setNewConcernKey] = useState(0)
 
-  const [defining, setDefining] = useState(false)
+  const [defineDialogOpen, setDefineDialogOpen] = useState(false)
 
   if (!concerns) return null
 
   return (
-    <Stack justifyContent="space-between" gap={1} height="100%">
-      {defining ? (
-        <DefineView onCancel={() => setDefining(false)} />
-      ) : concerns.length ? (
-        <>
-          <List dense sx={{ overflow: 'auto', flexGrow: 1 }}>
-            {concerns.map((concern) => (
+    <>
+      <Stack justifyContent="space-between" gap={1} height="100%">
+        {concerns.length ? (
+          <>
+            <List dense sx={{ overflow: 'auto', flexGrow: 1 }}>
+              {concerns.map((concern) => (
+                <ConcernItem
+                  key={`${concern.id}_${concern.text}`}
+                  initialValue={concern.text}
+                  onDelete={() => handleDelete(concern.id!)}
+                  onSubmit={(newValue) => handleEditDone(concern.id!, newValue)}
+                />
+              ))}
               <ConcernItem
-                key={`${concern.id}_${concern.text}`}
-                initialValue={concern.text}
-                onDelete={() => handleDelete(concern.id!)}
-                onSubmit={(newValue) => handleEditDone(concern.id!, newValue)}
+                key={newConcernKey}
+                initialValue=""
+                onDelete={() => setNewConcernKey((prev) => prev + 1)}
+                onSubmit={handleAdd}
               />
-            ))}
+            </List>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ marginLeft: 'auto' }}
+              onClick={() => setDefineDialogOpen(true)}
+            >
+              Start defining
+            </Button>
+          </>
+        ) : (
+          <Stack
+            sx={{ flexGrow: 1 }}
+            spacing={4}
+            alignItems="center"
+            justifyContent="center"
+          >
+            <HappyOtto />
+            <Typography variant="h5">
+              No concerns at the moment. Add whatever is on your mind!
+            </Typography>
             <ConcernItem
               key={newConcernKey}
               initialValue=""
               onDelete={() => setNewConcernKey((prev) => prev + 1)}
               onSubmit={handleAdd}
             />
-          </List>
-          <Button
-            variant="contained"
-            color="primary"
-            sx={{ marginLeft: 'auto' }}
-            onClick={() => setDefining(true)}
-          >
-            Start defining
-          </Button>
-        </>
-      ) : (
-        <Stack
-          sx={{ flexGrow: 1 }}
-          spacing={4}
-          alignItems="center"
-          justifyContent="center"
-        >
-          <HappyOtto />
-          <Typography variant="h5">
-            No concerns at the moment. Add whatever is on your mind!
-          </Typography>
-          <ConcernItem
-            key={newConcernKey}
-            initialValue=""
-            onDelete={() => setNewConcernKey((prev) => prev + 1)}
-            onSubmit={handleAdd}
-          />
-        </Stack>
-      )}
-    </Stack>
+          </Stack>
+        )}
+      </Stack>
+      <DefineDialog
+        open={defineDialogOpen}
+        onClose={() => setDefineDialogOpen(false)}
+      />
+    </>
   )
 }

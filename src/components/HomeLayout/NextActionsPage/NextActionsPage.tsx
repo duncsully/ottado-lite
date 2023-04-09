@@ -7,13 +7,9 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   Divider,
-  IconButton,
   List,
-  Menu,
-  MenuItem,
   Stack,
   TextField,
   Typography,
@@ -22,11 +18,11 @@ import { useEffect, useMemo, useState } from 'react'
 import { SelectChip } from './SelectChip/SelectChip'
 import { timeEstimateOptions } from '../../../options'
 import { Effort, NextAction, Option, Tag } from '../../../types'
-import { ExpandMore, FilterList, MoreVert } from '@mui/icons-material'
+import { ExpandMore, FilterList } from '@mui/icons-material'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../../../db'
-import { NextActionForm } from '../../NextActionForm/NextActionForm'
 import { NextActionItem } from './NextActionItem/NextActionItem'
+import { EditActionDialog } from './EditActionDialog/EditActionDialog'
 
 // TODO: Transitions?
 // TODO: Common tags across top?
@@ -220,106 +216,11 @@ export const NextActionsPage = () => {
     undefined
   )
 
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
-
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-
-  const handleSubmit = async (nextAction: NextAction) => {
-    if (!viewingAction) return
-    const previousTags = viewingAction.tags
-    db.transaction('rw', db.nextActions, db.tags, async () => {
-      const tagUpdates = nextAction.tags
-        .filter((tag) => !previousTags.includes(tag))
-        .map((tag) => {
-          const query = db.tags.where('name').equals(tag)
-          return query.count((count) => {
-            if (count === 0) {
-              return db.tags.add({ name: tag, usedCount: 1 })
-            }
-            return query.modify((currentTag) => {
-              currentTag.usedCount++
-            })
-          })
-        })
-      return Promise.all([
-        ...tagUpdates,
-        db.nextActions.update(viewingAction.id!, nextAction),
-      ])
-    })
-    setViewingAction(undefined)
-  }
-
-  const viewingActionComponent = (
-    <Stack gap={1}>
-      <Box sx={{ ml: 'auto' }}>
-        <IconButton
-          aria-haspopup="true"
-          onClick={(e) => setAnchorEl(e.currentTarget)}
-        >
-          <MoreVert />
-        </IconButton>
-        <Menu
-          anchorEl={anchorEl}
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          keepMounted
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          open={!!anchorEl}
-          onClose={handleClose}
-        >
-          <MenuItem
-            onClick={() => {
-              setDeleteDialogOpen(true)
-              handleClose()
-            }}
-          >
-            Delete
-          </MenuItem>
-        </Menu>
-      </Box>
-
-      <NextActionForm
-        existingAction={viewingAction}
-        onCancel={() => setViewingAction(undefined)}
-        onSubmit={handleSubmit}
-      />
-    </Stack>
-  )
-
-  // --------------------------------------------------------------------------
-  // Delete dialog
-  // --------------------------------------------------------------------------
-
-  const handleDelete = () => {
-    db.nextActions.delete(viewingAction!.id!)
-    handleClose()
-    setViewingAction(undefined)
-    setDeleteDialogOpen(false)
-  }
-
-  const deleteDialogComponent = (
-    <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-      <DialogTitle>Delete this next action?</DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          You won't be able to recover this next action if you delete it.
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
-        <Button onClick={handleDelete} autoFocus>
-          Delete
-        </Button>
-      </DialogActions>
-    </Dialog>
+  const viewNextActionComponent = (
+    <EditActionDialog
+      action={viewingAction}
+      onClose={() => setViewingAction(undefined)}
+    />
   )
 
   // --------------------------------------------------------------------------
@@ -382,32 +283,28 @@ export const NextActionsPage = () => {
 
   return (
     <Stack>
-      {viewingAction ? (
-        viewingActionComponent
-      ) : (
-        <>
-          {allUncompletedNextActions?.length === 0 ? (
-            <Typography sx={{ my: 1 }}>
-              No next actions found. Define some concerns!
-            </Typography>
-          ) : (
-            <>
-              {filterChipsComponent}
-              {filteredNextActions?.length ? (
-                showingNextActionsComponent
-              ) : (
-                <Typography sx={{ my: 1 }}>
-                  No next actions found with selected filters
-                </Typography>
-              )}
-            </>
-          )}
+      <>
+        {allUncompletedNextActions?.length === 0 ? (
+          <Typography sx={{ my: 1 }}>
+            No next actions found. Define some concerns!
+          </Typography>
+        ) : (
+          <>
+            {filterChipsComponent}
+            {filteredNextActions?.length ? (
+              showingNextActionsComponent
+            ) : (
+              <Typography sx={{ my: 1 }}>
+                No next actions found with selected filters
+              </Typography>
+            )}
+          </>
+        )}
 
-          <Divider sx={{ my: 2 }} />
-          {completedTodayNextActionsComponent}
-        </>
-      )}
-      {deleteDialogComponent}
+        <Divider sx={{ my: 2 }} />
+        {completedTodayNextActionsComponent}
+      </>
+      {viewNextActionComponent}
       {tagDialogComponent}
     </Stack>
   )

@@ -17,7 +17,7 @@ export const NextActionItem: React.FC<{
       />
       <Card
         elevation={5}
-        sx={{ borderRadius: '15px', p: 2, width: '100%' }}
+        sx={{ borderRadius: '15px', p: 2, width: '100%', cursor: 'pointer' }}
         onClick={onClick}
       >
         <ListItemText

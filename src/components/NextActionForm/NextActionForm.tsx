@@ -54,8 +54,7 @@ const priorityItems = Object.entries(Priority).reduce(
 export const NextActionForm: FC<{
   existingAction?: NextAction
   onSubmit(nextAction: NextAction): void
-  onCancel(): void
-}> = ({ existingAction, onSubmit, onCancel }) => {
+}> = ({ existingAction, onSubmit }) => {
   const tags = useLiveQuery(() => db.tags.toArray())
 
   const handleTagChange = (_: React.SyntheticEvent, value: string[]) => {
@@ -212,14 +211,13 @@ export const NextActionForm: FC<{
             />
           )}
         />
-        <Stack direction="row" justifyContent="space-between">
-          <Button onClick={onCancel}>Cancel</Button>
+        <Stack direction="row">
           <Button
             type="submit"
             variant="contained"
             color="primary"
             disabled={!canSubmit}
-            sx={{ borderRadius: '20px' }}
+            sx={{ borderRadius: '20px', ml: 'auto' }}
           >
             {existingAction ? 'Update next action' : 'Add next action'}
           </Button>
