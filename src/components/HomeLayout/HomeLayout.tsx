@@ -24,7 +24,12 @@ const getPageFromHash = () => {
     '#next-actions': <NextActionsPage />,
     '#concerns': <ConcernsPage />,
   } as { [key: string]: JSX.Element }
-  return pages[window.location.hash] ?? pages['#next-actions']
+  const page = pages[window.location.hash]
+  if (!page) {
+    location.hash = '#next-actions'
+    return pages['#next-actions']
+  }
+  return page
 }
 
 export const HomeLayout: FC = () => {

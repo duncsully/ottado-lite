@@ -1,6 +1,7 @@
 import { createTheme, ThemeProvider, useMediaQuery } from '@mui/material'
 import { useMemo, type FC, type ReactNode } from 'react'
 
+// TODO: Support light mode
 export const CustomizedThemeProvider: FC<{
   children: ReactNode
 }> = ({ children }) => {
@@ -9,7 +10,7 @@ export const CustomizedThemeProvider: FC<{
     () =>
       createTheme({
         palette: {
-          mode: prefersDarkMode ? 'dark' : 'light',
+          mode: 'dark', //prefersDarkMode ? 'dark' : 'light',
           primary: {
             main: '#FF9500',
           },

@@ -1,10 +1,11 @@
-import { Card, IconButton, Stack, Typography } from '@mui/material'
+import { Button, Card, IconButton, Stack, Typography } from '@mui/material'
 import { FC, useEffect } from 'react'
 import { NextActionForm } from '../../../NextActionForm/NextActionForm'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../../../../db'
 import { NextAction } from '../../../../types'
 import { Delete } from '@mui/icons-material'
+import { HappyOtto } from '../../../Otto/HappyOtto'
 
 /* TODO
 - Add to calendar
@@ -40,8 +41,8 @@ export const DefineView: FC<{ onCancel(): void }> = ({ onCancel }) => {
   }
 
   return (
-    <Stack gap="1rem">
-      {concerns && (
+    <Stack gap="1rem" height="100%">
+      {concerns && concerns.length ? (
         <>
           <Typography sx={{ alignSelf: 'center' }}>
             {concerns.length} left
@@ -68,6 +69,19 @@ export const DefineView: FC<{ onCancel(): void }> = ({ onCancel }) => {
             key={topConcern?.id}
           />
         </>
+      ) : (
+        <Stack
+          sx={{ flexGrow: 1 }}
+          spacing={4}
+          alignItems="center"
+          justifyContent="center"
+        >
+          <HappyOtto />
+          <Typography variant="h5">
+            You've defined all your concerns!
+          </Typography>
+          <Button href="#next-actions">View next actions</Button>
+        </Stack>
       )}
     </Stack>
   )
