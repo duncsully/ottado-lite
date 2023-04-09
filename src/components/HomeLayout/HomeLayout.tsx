@@ -57,15 +57,15 @@ export const HomeLayout: FC = () => {
       <Box>
         <AppBar position="static">
           <Toolbar>
-            <IconButton
+            {/* <IconButton
               size="large"
               edge="start"
               aria-label="menu"
               sx={{ mr: 2 }}
             >
               <MenuIcon />
-            </IconButton>
-            <Box mr={2} ml={-1}>
+            </IconButton> */}
+            <Box mr={2}>
               <DefaultOtto width={40} />
             </Box>
 
