@@ -14,6 +14,7 @@ import {
   Schedule,
   FitnessCenter,
   PriorityHigh,
+  LocalOffer,
 } from '@mui/icons-material'
 import { timeEstimateOptions } from '../../options'
 import { db } from '../../db'
@@ -198,15 +199,17 @@ export const NextActionForm: FC<{
               {...params}
               variant="filled"
               label="Tags"
-              // TODO: Breaks chips
-              /* InputProps={{
+              InputProps={{
                 ...params.InputProps,
                 startAdornment: (
-                  <InputAdornment position="start">
-                    <LocalOffer sx={{ mt: '-16px' }} />
-                  </InputAdornment>
+                  <>
+                    <InputAdornment position="start">
+                      <LocalOffer sx={{ mt: '-16px' }} />
+                    </InputAdornment>
+                    {params.InputProps.startAdornment}
+                  </>
                 ),
-              }} */
+              }}
             />
           )}
         />
