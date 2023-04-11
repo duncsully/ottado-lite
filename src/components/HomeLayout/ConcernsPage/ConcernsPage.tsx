@@ -60,9 +60,8 @@ export const ConcernsPage: FC = () => {
             justifyContent="center"
           >
             <HappyOtto />
-            <Typography variant="h5">
-              No concerns at the moment. Add whatever is on your mind!
-            </Typography>
+            <Typography variant="h4">No concerns!</Typography>
+            <Typography variant="h5">Add whatever is on your mind</Typography>
           </Stack>
         )}
         <TextField
