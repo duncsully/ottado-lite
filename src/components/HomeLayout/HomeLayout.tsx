@@ -14,12 +14,13 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material'
-import { Add, Checklist, Lightbulb, Create } from '@mui/icons-material'
+import { Add, Checklist, Lightbulb, Create, AddTask } from '@mui/icons-material'
 import { DefaultOtto } from '../Otto/DefaultOtto'
 import { useEffect, useState, type FC } from 'react'
 import { ConcernsPage } from './ConcernsPage/ConcernsPage'
 import { NextActionsPage } from './NextActionsPage/NextActionsPage'
 import { DefineDialog } from './ConcernsPage/DefineDialog/DefineDialog'
+import { AddActionDialog } from './AddActionDialog.tsx/AddActionDialog'
 
 const getPageFromHash = () => {
   const pages = {
@@ -53,6 +54,8 @@ export const HomeLayout: FC = () => {
   }, [])
 
   const [defineDialogOpen, setDefineDialogOpen] = useState(false)
+
+  const [addDialogOpen, setAddDialogOpen] = useState(false)
 
   const [drawerOpen, setDrawerOpen] = useState(false)
 
@@ -149,12 +152,31 @@ export const HomeLayout: FC = () => {
         open={defineDialogOpen}
         onClose={() => setDefineDialogOpen(false)}
       />
+
+      <AddActionDialog
+        open={addDialogOpen}
+        onClose={() => setAddDialogOpen(false)}
+      />
+
       <Drawer
         anchor="bottom"
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
       >
         <List>
+          <ListItem>
+            <ListItemButton
+              onClick={() => {
+                setAddDialogOpen(true)
+                setDrawerOpen(false)
+              }}
+            >
+              <ListItemIcon>
+                <AddTask />
+              </ListItemIcon>
+              <ListItemText>Create Next Action</ListItemText>
+            </ListItemButton>
+          </ListItem>
           <ListItem>
             <ListItemButton
               onClick={() => {
