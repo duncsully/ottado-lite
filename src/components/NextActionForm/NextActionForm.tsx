@@ -9,12 +9,12 @@ import {
 import { FormEventHandler, useState, type ReactNode, type FC } from 'react'
 import { Effort, NextAction, Priority } from '../../types'
 import {
-  Label,
   Notes,
   Schedule,
   FitnessCenter,
   PriorityHigh,
   LocalOffer,
+  Title,
 } from '@mui/icons-material'
 import { timeEstimateOptions } from '../../options'
 import { db } from '../../db'
@@ -105,7 +105,7 @@ export const NextActionForm: FC<{
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <Label />
+                <Title />
               </InputAdornment>
             ),
           }}
