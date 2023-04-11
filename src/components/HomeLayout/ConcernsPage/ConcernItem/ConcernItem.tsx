@@ -7,7 +7,6 @@ import {
 import { useLayoutEffect, useRef, useState, type FC } from 'react'
 import { Delete } from '@mui/icons-material'
 
-// TODO: Only show delete button when focused
 // TODO: Add background color to theme
 // TODO: Don't show input outline
 

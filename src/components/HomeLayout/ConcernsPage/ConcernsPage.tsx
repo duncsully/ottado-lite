@@ -1,22 +1,29 @@
-import { Button, List, Stack, Typography } from '@mui/material'
-import { useState } from 'react'
+import {
+  IconButton,
+  InputAdornment,
+  List,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material'
+import { FC, useState } from 'react'
 import { HappyOtto } from '../../Otto/HappyOtto'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../../../db'
 import { ConcernItem } from './ConcernItem/ConcernItem'
-import { DefineDialog } from './DefineDialog/DefineDialog'
+import { Add } from '@mui/icons-material'
 
 /*
 TODO:
-- Style for desktop
 - Improve edit (flashes after submitting)
 */
-export const ConcernsPage = () => {
+export const ConcernsPage: FC = () => {
   const concerns = useLiveQuery(() => db.concerns.toArray())
 
-  const handleAdd = async (text: string) => {
-    await db.concerns.add({ text, createdAt: Date.now() })
-    setNewConcernKey((prev) => prev + 1)
+  const [newConcernText, setNewConcernText] = useState('')
+  const handleAdd = async () => {
+    await db.concerns.add({ text: newConcernText, createdAt: Date.now() })
+    setNewConcernText('')
   }
 
   const handleDelete = async (id: number) => {
@@ -29,42 +36,22 @@ export const ConcernsPage = () => {
     }
   }
 
-  const [newConcernKey, setNewConcernKey] = useState(0)
-
-  const [defineDialogOpen, setDefineDialogOpen] = useState(false)
-
   if (!concerns) return null
 
   return (
     <>
       <Stack justifyContent="space-between" gap={1} height="100%">
         {concerns.length ? (
-          <>
-            <List dense sx={{ overflow: 'auto', flexGrow: 1 }}>
-              {concerns.map((concern) => (
-                <ConcernItem
-                  key={`${concern.id}_${concern.text}`}
-                  initialValue={concern.text}
-                  onDelete={() => handleDelete(concern.id!)}
-                  onSubmit={(newValue) => handleEditDone(concern.id!, newValue)}
-                />
-              ))}
+          <List dense sx={{ overflow: 'auto', flexGrow: 1 }} disablePadding>
+            {concerns.map((concern) => (
               <ConcernItem
-                key={newConcernKey}
-                initialValue=""
-                onDelete={() => setNewConcernKey((prev) => prev + 1)}
-                onSubmit={handleAdd}
+                key={`${concern.id}_${concern.text}`}
+                initialValue={concern.text}
+                onDelete={() => handleDelete(concern.id!)}
+                onSubmit={(newValue) => handleEditDone(concern.id!, newValue)}
               />
-            </List>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ marginLeft: 'auto' }}
-              onClick={() => setDefineDialogOpen(true)}
-            >
-              Start defining
-            </Button>
-          </>
+            ))}
+          </List>
         ) : (
           <Stack
             sx={{ flexGrow: 1 }}
@@ -76,19 +63,36 @@ export const ConcernsPage = () => {
             <Typography variant="h5">
               No concerns at the moment. Add whatever is on your mind!
             </Typography>
-            <ConcernItem
-              key={newConcernKey}
-              initialValue=""
-              onDelete={() => setNewConcernKey((prev) => prev + 1)}
-              onSubmit={handleAdd}
-            />
           </Stack>
         )}
+        <TextField
+          size="small"
+          label="New concern"
+          placeholder="What's on your mind?"
+          variant="filled"
+          value={newConcernText}
+          onChange={(e) => setNewConcernText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleAdd()
+            }
+          }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  edge="end"
+                  onClick={handleAdd}
+                  disabled={!newConcernText.trim()}
+                >
+                  <Add />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+          autoFocus
+        />
       </Stack>
-      <DefineDialog
-        open={defineDialogOpen}
-        onClose={() => setDefineDialogOpen(false)}
-      />
     </>
   )
 }
