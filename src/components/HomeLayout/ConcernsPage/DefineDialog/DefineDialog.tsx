@@ -80,35 +80,39 @@ export const DefineDialog: FC<{ open: boolean; onClose(): void }> = ({
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
               Define concerns
             </Typography>
-            <IconButton
-              edge="end"
-              onClick={(e) => setAnchorEl(e.currentTarget)}
-            >
-              <MoreVert />
-            </IconButton>
-            <Menu
-              anchorEl={anchorEl}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={!!anchorEl}
-              onClose={handleClose}
-            >
-              <MenuItem
-                onClick={() => {
-                  setDeleteDialogOpen(true)
-                  handleClose()
-                }}
-              >
-                Delete
-              </MenuItem>
-            </Menu>
+            {topConcern && (
+              <>
+                <IconButton
+                  edge="end"
+                  onClick={(e) => setAnchorEl(e.currentTarget)}
+                >
+                  <MoreVert />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  open={!!anchorEl}
+                  onClose={handleClose}
+                >
+                  <MenuItem
+                    onClick={() => {
+                      setDeleteDialogOpen(true)
+                      handleClose()
+                    }}
+                  >
+                    Delete
+                  </MenuItem>
+                </Menu>
+              </>
+            )}
           </Toolbar>
         </AppBar>
         <Stack gap="1rem" height="100%" p={2}>
@@ -136,9 +140,8 @@ export const DefineDialog: FC<{ open: boolean; onClose(): void }> = ({
               justifyContent="center"
             >
               <HappyOtto />
-              <Typography variant="h5">
-                You've defined all your concerns!
-              </Typography>
+              <Typography variant="h4">All done!</Typography>
+              <Typography variant="h5">No more concerns to define</Typography>
               <Button href="#next-actions" onClick={onClose}>
                 View next actions
               </Button>
