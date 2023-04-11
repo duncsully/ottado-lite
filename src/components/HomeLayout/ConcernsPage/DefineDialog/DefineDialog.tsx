@@ -139,7 +139,9 @@ export const DefineDialog: FC<{ open: boolean; onClose(): void }> = ({
               <Typography variant="h5">
                 You've defined all your concerns!
               </Typography>
-              <Button href="#next-actions">View next actions</Button>
+              <Button href="#next-actions" onClick={onClose}>
+                View next actions
+              </Button>
             </Stack>
           )}
         </Stack>
