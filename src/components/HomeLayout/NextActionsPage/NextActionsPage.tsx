@@ -92,7 +92,7 @@ export const NextActionsPage = () => {
   )
 
   const filterChipsComponent = (
-    <Stack direction="row" gap="8px" my={1}>
+    <Stack direction="row" gap="8px" mb={1}>
       <SelectChip
         label="Effort"
         options={effortOptions}
