@@ -3,17 +3,11 @@ import {
   BottomNavigation,
   BottomNavigationAction,
   Box,
-  IconButton,
-  Menu,
-  MenuItem,
   Paper,
   Toolbar,
   Typography,
 } from '@mui/material'
-import PendingActionsIcon from '@mui/icons-material/PendingActions'
-import NotesIcon from '@mui/icons-material/Notes'
-import MenuIcon from '@mui/icons-material/Menu'
-import { AccountCircle } from '@mui/icons-material'
+import { Checklist, Lightbulb } from '@mui/icons-material'
 import { DefaultOtto } from '../Otto/DefaultOtto'
 import { useEffect, useState, type FC } from 'react'
 import { ConcernsPage } from './ConcernsPage/ConcernsPage'
@@ -118,13 +112,13 @@ export const HomeLayout: FC = () => {
         <BottomNavigation showLabels value={window.location.hash}>
           <BottomNavigationAction
             label="Next Actions"
-            icon={<PendingActionsIcon />}
+            icon={<Checklist />}
             href="#next-actions"
             value="#next-actions"
           />
           <BottomNavigationAction
             label="Concerns"
-            icon={<NotesIcon />}
+            icon={<Lightbulb />}
             href="#concerns"
             value="#concerns"
           />
