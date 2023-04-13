@@ -23,6 +23,8 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../../../db'
 import { NextActionItem } from './NextActionItem/NextActionItem'
 import { EditActionDialog } from './EditActionDialog/EditActionDialog'
+import { OttoMessage } from '../../OttoMessage/OttoMessage'
+import { ConcernedOtto } from '../../Otto/ConcernedOtto'
 
 // TODO: Transitions?
 // TODO: Common tags across top?
@@ -285,9 +287,11 @@ export const NextActionsPage = () => {
     <Stack>
       <>
         {allUncompletedNextActions?.length === 0 ? (
-          <Typography sx={{ my: 1 }}>
-            No next actions found. Define some concerns!
-          </Typography>
+          <OttoMessage
+            ottoComponent={<ConcernedOtto />}
+            title="No next actions"
+            message="Define some concerns!"
+          />
         ) : (
           <>
             {filterChipsComponent}
