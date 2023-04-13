@@ -12,6 +12,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../../../db'
 import { ConcernItem } from './ConcernItem/ConcernItem'
 import { Add } from '@mui/icons-material'
+import { OttoMessage } from '../../OttoMessage/OttoMessage'
 
 /*
 TODO:
@@ -53,16 +54,11 @@ export const ConcernsPage: FC = () => {
             ))}
           </List>
         ) : (
-          <Stack
-            sx={{ flexGrow: 1 }}
-            spacing={4}
-            alignItems="center"
-            justifyContent="center"
-          >
-            <HappyOtto />
-            <Typography variant="h4">No concerns!</Typography>
-            <Typography variant="h5">Add whatever is on your mind</Typography>
-          </Stack>
+          <OttoMessage
+            ottoComponent={<HappyOtto />}
+            title="No concerns!"
+            message="Add whatever is on your mind"
+          />
         )}
         <TextField
           size="small"

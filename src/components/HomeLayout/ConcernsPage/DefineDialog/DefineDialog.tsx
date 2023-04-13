@@ -22,6 +22,7 @@ import { NextAction } from '../../../../types'
 import { Close, MoreVert } from '@mui/icons-material'
 import { HappyOtto } from '../../../Otto/HappyOtto'
 import { Transition } from '../../../FullscreenDialogTransition/FullScreenDialogTransition'
+import { OttoMessage } from '../../../OttoMessage/OttoMessage'
 
 export const DefineDialog: FC<{ open: boolean; onClose(): void }> = ({
   open,
@@ -133,19 +134,11 @@ export const DefineDialog: FC<{ open: boolean; onClose(): void }> = ({
               <NextActionForm onSubmit={handleSubmit} key={topConcern?.id} />
             </>
           ) : (
-            <Stack
-              sx={{ flexGrow: 1 }}
-              spacing={4}
-              alignItems="center"
-              justifyContent="center"
-            >
-              <HappyOtto />
-              <Typography variant="h4">All done!</Typography>
-              <Typography variant="h5">No more concerns to define</Typography>
-              <Button href="#next-actions" onClick={onClose}>
-                View next actions
-              </Button>
-            </Stack>
+            <OttoMessage
+              ottoComponent={<HappyOtto />}
+              title="All done!"
+              message="No more concerns to define"
+            />
           )}
         </Stack>
       </Dialog>
