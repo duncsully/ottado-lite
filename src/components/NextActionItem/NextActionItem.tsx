@@ -1,20 +1,22 @@
 import { Card, Checkbox, ListItem, ListItemText } from '@mui/material'
-import { NextAction } from '../../../../types'
+import { NextAction } from '../../types'
 
 export const NextActionItem: React.FC<{
   nextAction: NextAction
-  onToggle(): void
+  onToggle?(): void
   checked?: boolean
   onClick(): void
 }> = ({ nextAction, onToggle, checked, onClick }) => {
   return (
     <ListItem key={nextAction.id} disableGutters>
-      <Checkbox
-        edge="start"
-        sx={{ mr: 1 }}
-        onChange={onToggle}
-        checked={checked}
-      />
+      {onToggle && (
+        <Checkbox
+          edge="start"
+          sx={{ mr: 1 }}
+          onChange={onToggle}
+          checked={checked}
+        />
+      )}
       <Card
         elevation={5}
         sx={{ borderRadius: '15px', p: 2, width: '100%', cursor: 'pointer' }}

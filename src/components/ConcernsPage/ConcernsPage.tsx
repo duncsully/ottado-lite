@@ -4,15 +4,14 @@ import {
   List,
   Stack,
   TextField,
-  Typography,
 } from '@mui/material'
 import { FC, useState } from 'react'
-import { HappyOtto } from '../../Otto/HappyOtto'
+import { HappyOtto } from '../Otto/HappyOtto'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { db } from '../../../db'
-import { ConcernItem } from './ConcernItem/ConcernItem'
+import { db } from '../../db'
 import { Add } from '@mui/icons-material'
-import { OttoMessage } from '../../OttoMessage/OttoMessage'
+import { OttoMessage } from '../OttoMessage/OttoMessage'
+import { ConcernItem } from '../ConcernItem/ConcernItem'
 
 /*
 TODO:

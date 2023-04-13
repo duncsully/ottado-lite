@@ -17,10 +17,10 @@ import {
 import { Add, Checklist, Lightbulb, Create, AddTask } from '@mui/icons-material'
 import { DefaultOtto } from '../Otto/DefaultOtto'
 import { useEffect, useState, type FC } from 'react'
-import { ConcernsPage } from './ConcernsPage/ConcernsPage'
-import { NextActionsPage } from './NextActionsPage/NextActionsPage'
-import { DefineDialog } from './ConcernsPage/DefineDialog/DefineDialog'
-import { AddActionDialog } from './AddActionDialog.tsx/AddActionDialog'
+import { ConcernsPage } from '../ConcernsPage/ConcernsPage'
+import { NextActionsPage } from '../NextActionsPage/NextActionsPage'
+import { DefineDialog } from '../DefineDialog/DefineDialog'
+import { AddActionDialog } from '../AddActionDialog.tsx/AddActionDialog'
 
 const getPageFromHash = () => {
   const pages = {
@@ -174,7 +174,7 @@ export const HomeLayout: FC = () => {
               <ListItemIcon>
                 <AddTask />
               </ListItemIcon>
-              <ListItemText>Create Next Action</ListItemText>
+              <ListItemText>Create next action</ListItemText>
             </ListItemButton>
           </ListItem>
           <ListItem>

@@ -8,6 +8,7 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
+  List,
   Menu,
   MenuItem,
   Stack,
@@ -15,14 +16,16 @@ import {
   Typography,
 } from '@mui/material'
 import { FC, useState } from 'react'
-import { NextActionForm } from '../../../NextActionForm/NextActionForm'
+import { NextActionForm } from '../NextActionForm/NextActionForm'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { db } from '../../../../db'
-import { NextAction } from '../../../../types'
-import { Close, MoreVert } from '@mui/icons-material'
-import { HappyOtto } from '../../../Otto/HappyOtto'
-import { Transition } from '../../../FullscreenDialogTransition/FullScreenDialogTransition'
-import { OttoMessage } from '../../../OttoMessage/OttoMessage'
+import { db } from '../../db'
+import { NextAction } from '../../types'
+import { ArrowBack, Close, MoreVert } from '@mui/icons-material'
+import { HappyOtto } from '../Otto/HappyOtto'
+import { Transition } from '../FullscreenDialogTransition/FullScreenDialogTransition'
+import { OttoMessage } from '../OttoMessage/OttoMessage'
+import { NextActionItem } from '../NextActionItem/NextActionItem'
+import { EditActionDialog } from '../EditActionDialog/EditActionDialog'
 
 export const DefineDialog: FC<{ open: boolean; onClose(): void }> = ({
   open,
@@ -32,9 +35,26 @@ export const DefineDialog: FC<{ open: boolean; onClose(): void }> = ({
 
   const topConcern = concerns?.[0]
 
+  const nextActionsFromConcern = useLiveQuery(
+    () =>
+      topConcern?.id
+        ? db.nextActions.where('concernId').equals(topConcern.id).toArray()
+        : [],
+    [topConcern?.id]
+  )
+
   const handleDelete = async () => {
     if (!topConcern) return
     db.concerns.delete(topConcern.id!)
+    db.nextActions.bulkDelete(
+      nextActionsFromConcern!.map((nextAction) => nextAction.id!)
+    )
+    setDeleteDialogOpen(false)
+  }
+
+  const handleDone = async () => {
+    if (!topConcern) return
+    return db.concerns.delete(topConcern!.id!)
   }
 
   const handleSubmit = async (nextAction: NextAction) => {
@@ -51,10 +71,10 @@ export const DefineDialog: FC<{ open: boolean; onClose(): void }> = ({
       })
       return Promise.all([
         ...tagUpdates,
-        db.nextActions.add(nextAction),
-        db.concerns.delete(topConcern.id!),
+        db.nextActions.add({ ...nextAction, concernId: topConcern?.id }),
       ])
     })
+    setDefining(false)
   }
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
@@ -63,6 +83,11 @@ export const DefineDialog: FC<{ open: boolean; onClose(): void }> = ({
   }
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+
+  const [defining, setDefining] = useState<boolean>(false)
+  const [editingAction, setEditingAction] = useState<NextAction | undefined>(
+    undefined
+  )
 
   return (
     <>
@@ -75,8 +100,11 @@ export const DefineDialog: FC<{ open: boolean; onClose(): void }> = ({
       >
         <AppBar sx={{ position: 'relative' }}>
           <Toolbar>
-            <IconButton edge="start" onClick={onClose}>
-              <Close />
+            <IconButton
+              edge="start"
+              onClick={defining ? () => setDefining(false) : onClose}
+            >
+              {defining ? <ArrowBack /> : <Close />}
             </IconButton>
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
               Define concerns
@@ -116,7 +144,7 @@ export const DefineDialog: FC<{ open: boolean; onClose(): void }> = ({
             )}
           </Toolbar>
         </AppBar>
-        <Stack gap="1rem" height="100%" p={2}>
+        <Stack gap="1rem" height="100%" p={2} overflow="auto">
           {concerns && concerns.length ? (
             <>
               <Typography sx={{ alignSelf: 'center' }}>
@@ -131,7 +159,42 @@ export const DefineDialog: FC<{ open: boolean; onClose(): void }> = ({
                   <Typography>{topConcern?.text}</Typography>
                 </Stack>
               </Card>
-              <NextActionForm onSubmit={handleSubmit} key={topConcern?.id} />
+              {defining ? (
+                <NextActionForm
+                  onSubmit={(nextAction) => handleSubmit(nextAction)}
+                />
+              ) : (
+                <>
+                  <Typography variant="h6">Next actions</Typography>
+                  {nextActionsFromConcern?.length ? (
+                    <List disablePadding sx={{ overflow: 'auto' }}>
+                      {nextActionsFromConcern?.map((nextAction) => (
+                        <NextActionItem
+                          key={nextAction.id}
+                          nextAction={nextAction}
+                          onClick={() => setEditingAction(nextAction)}
+                        />
+                      ))}
+                    </List>
+                  ) : (
+                    <Typography>No next actions defined yet</Typography>
+                  )}
+
+                  <Button onClick={() => setDefining(true)}>
+                    Define a next action
+                  </Button>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    sx={{ borderRadius: '20px', mt: 'auto' }}
+                    disabled={!nextActionsFromConcern?.length}
+                    onClick={handleDone}
+                  >
+                    Done with concern
+                  </Button>
+                </>
+              )}
             </>
           ) : (
             <OttoMessage
@@ -149,7 +212,8 @@ export const DefineDialog: FC<{ open: boolean; onClose(): void }> = ({
         <DialogTitle>Delete this concern?</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            You won't be able to recover this concern if you delete it.
+            You won't be able to recover this concern if you delete it. All
+            defined next actions will be deleted as well.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -159,6 +223,10 @@ export const DefineDialog: FC<{ open: boolean; onClose(): void }> = ({
           </Button>
         </DialogActions>
       </Dialog>
+      <EditActionDialog
+        action={editingAction}
+        onClose={() => setEditingAction(undefined)}
+      />
     </>
   )
 }

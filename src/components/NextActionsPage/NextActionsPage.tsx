@@ -15,16 +15,16 @@ import {
   Typography,
 } from '@mui/material'
 import { useEffect, useMemo, useState } from 'react'
-import { SelectChip } from './SelectChip/SelectChip'
-import { timeEstimateOptions } from '../../../options'
-import { Effort, NextAction, Option, Tag } from '../../../types'
+import { SelectChip } from '../SelectChip/SelectChip'
+import { timeEstimateOptions } from '../../options'
+import { Effort, NextAction, Option, Tag } from '../../types'
 import { ExpandMore, FilterList } from '@mui/icons-material'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { db } from '../../../db'
-import { NextActionItem } from './NextActionItem/NextActionItem'
-import { EditActionDialog } from './EditActionDialog/EditActionDialog'
-import { OttoMessage } from '../../OttoMessage/OttoMessage'
-import { ConcernedOtto } from '../../Otto/ConcernedOtto'
+import { db } from '../../db'
+import { NextActionItem } from '../NextActionItem/NextActionItem'
+import { EditActionDialog } from '../EditActionDialog/EditActionDialog'
+import { OttoMessage } from '../OttoMessage/OttoMessage'
+import { ConcernedOtto } from '../Otto/ConcernedOtto'
 
 // TODO: Transitions?
 // TODO: Common tags across top?
@@ -174,13 +174,13 @@ export const NextActionsPage = () => {
       : filteredNextActions?.slice(showingIndex, showingIndex + 2)) ?? []
 
   const handleNewOptions = () => {
-    const nextActionsLength = filteredNextActions?.length ?? 0
     setShowingIndex((index) => {
-      if (index >= nextActionsLength - 2) {
-        return 0
-      }
       return index + 2
     })
+  }
+
+  if (showingIndex >= filteredNextActions?.length && showingIndex >= 2) {
+    setShowingIndex(0)
   }
 
   useEffect(() => {

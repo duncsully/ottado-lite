@@ -14,11 +14,11 @@ import {
   Typography,
 } from '@mui/material'
 import { useState, type FC } from 'react'
-import { Transition } from '../../../FullscreenDialogTransition/FullScreenDialogTransition'
+import { Transition } from '../FullscreenDialogTransition/FullScreenDialogTransition'
 import { Close, MoreVert } from '@mui/icons-material'
-import { db } from '../../../../db'
-import { NextAction } from '../../../../types'
-import { NextActionForm } from '../../../NextActionForm/NextActionForm'
+import { db } from '../../db'
+import { NextAction } from '../../types'
+import { NextActionForm } from '../NextActionForm/NextActionForm'
 
 export const EditActionDialog: FC<{ action?: NextAction; onClose(): void }> = ({
   action,

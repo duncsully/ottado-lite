@@ -14,6 +14,8 @@ export interface NextAction {
   priority: Priority
   tags: string[]
   completedAt?: number
+  // Concern may be deleted, but we track the originating concern ID
+  concernId?: number
 }
 
 export enum Effort {
