@@ -103,7 +103,7 @@ export const NextActionsPage = () => {
         onChange={(value) => setEffort(value)}
       />
       <SelectChip
-        label="Time Estimate"
+        label="Time"
         options={timeEstimateOptions}
         getLabel={(option) => option.text}
         value={timeEstimate}
