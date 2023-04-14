@@ -1,17 +1,20 @@
 import {
+  Fab,
   IconButton,
   InputAdornment,
   List,
   Stack,
   TextField,
+  Zoom,
 } from '@mui/material'
 import { FC, useState } from 'react'
 import { HappyOtto } from '../Otto/HappyOtto'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../../db'
-import { Add } from '@mui/icons-material'
+import { Add, Create } from '@mui/icons-material'
 import { OttoMessage } from '../OttoMessage/OttoMessage'
 import { ConcernItem } from '../ConcernItem/ConcernItem'
+import { DefineDialog } from '../DefineDialog/DefineDialog'
 
 /*
 TODO:
@@ -36,6 +39,8 @@ export const ConcernsPage: FC = () => {
     }
   }
 
+  const [defineDialogOpen, setDefineDialogOpen] = useState(false)
+
   if (!concerns) return null
 
   return (
@@ -59,34 +64,50 @@ export const ConcernsPage: FC = () => {
             message="Add whatever is on your mind"
           />
         )}
-        <TextField
-          size="small"
-          label="New concern"
-          placeholder="What's on your mind?"
-          variant="filled"
-          value={newConcernText}
-          onChange={(e) => setNewConcernText(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              handleAdd()
-            }
-          }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  edge="end"
-                  onClick={handleAdd}
-                  disabled={!newConcernText.trim()}
-                >
-                  <Add />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-          autoFocus
-        />
+        <Stack direction="row" gap={2}>
+          <TextField
+            size="small"
+            label="New concern"
+            placeholder="What's on your mind?"
+            variant="filled"
+            value={newConcernText}
+            onChange={(e) => setNewConcernText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleAdd()
+              }
+            }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    edge="end"
+                    onClick={handleAdd}
+                    disabled={!newConcernText.trim()}
+                  >
+                    <Add />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            autoFocus
+            sx={{ flexGrow: 1, alignSelf: 'flex-end' }}
+          />
+          <Zoom in>
+            <Fab
+              color="primary"
+              sx={{ borderRadius: '16px' }}
+              onClick={() => setDefineDialogOpen(true)}
+            >
+              <Create />
+            </Fab>
+          </Zoom>
+        </Stack>
       </Stack>
+      <DefineDialog
+        open={defineDialogOpen}
+        onClose={() => setDefineDialogOpen(false)}
+      />
     </>
   )
 }

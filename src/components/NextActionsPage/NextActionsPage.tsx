@@ -9,22 +9,25 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
+  Fab,
   List,
   Stack,
   TextField,
   Typography,
+  Zoom,
 } from '@mui/material'
 import { useEffect, useMemo, useState } from 'react'
 import { SelectChip } from '../SelectChip/SelectChip'
 import { timeEstimateOptions } from '../../options'
 import { Effort, NextAction, Option, Tag } from '../../types'
-import { ExpandMore, FilterList } from '@mui/icons-material'
+import { Add, ExpandMore, FilterList } from '@mui/icons-material'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../../db'
 import { NextActionItem } from '../NextActionItem/NextActionItem'
 import { EditActionDialog } from '../EditActionDialog/EditActionDialog'
 import { OttoMessage } from '../OttoMessage/OttoMessage'
 import { ConcernedOtto } from '../Otto/ConcernedOtto'
+import { AddActionDialog } from '../AddActionDialog.tsx/AddActionDialog'
 
 // TODO: Transitions?
 // TODO: Common tags across top?
@@ -280,11 +283,24 @@ export const NextActionsPage = () => {
     )
 
   // --------------------------------------------------------------------------
+  // Quick add dialog
+  // --------------------------------------------------------------------------
+  const [addDialogOpen, setAddDialogOpen] = useState(false)
+  const addDialogComponent = (
+    <AddActionDialog
+      open={addDialogOpen}
+      onClose={() => setAddDialogOpen(false)}
+    />
+  )
+
+  // --------------------------------------------------------------------------
   // Render
   // --------------------------------------------------------------------------
 
+  if (!allUncompletedNextActions) return null
+
   return (
-    <Stack>
+    <Stack height="100%">
       <>
         {allUncompletedNextActions?.length === 0 ? (
           <OttoMessage
@@ -308,8 +324,23 @@ export const NextActionsPage = () => {
         <Divider sx={{ my: 2 }} />
         {completedTodayNextActionsComponent}
       </>
+      <Zoom in>
+        <Fab
+          color="primary"
+          sx={{
+            marginTop: 'auto',
+            alignSelf: 'flex-end',
+            borderRadius: '16px',
+          }}
+          onClick={() => setAddDialogOpen(true)}
+        >
+          <Add />
+        </Fab>
+      </Zoom>
+
       {viewNextActionComponent}
       {tagDialogComponent}
+      {addDialogComponent}
     </Stack>
   )
 }

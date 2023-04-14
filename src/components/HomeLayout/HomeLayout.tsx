@@ -3,24 +3,15 @@ import {
   BottomNavigation,
   BottomNavigationAction,
   Box,
-  Drawer,
-  Fab,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
   Paper,
   Toolbar,
   Typography,
 } from '@mui/material'
-import { Add, Checklist, Lightbulb, Create, AddTask } from '@mui/icons-material'
+import { Checklist, Lightbulb } from '@mui/icons-material'
 import { DefaultOtto } from '../Otto/DefaultOtto'
 import { useEffect, useState, type FC } from 'react'
 import { ConcernsPage } from '../ConcernsPage/ConcernsPage'
 import { NextActionsPage } from '../NextActionsPage/NextActionsPage'
-import { DefineDialog } from '../DefineDialog/DefineDialog'
-import { AddActionDialog } from '../AddActionDialog.tsx/AddActionDialog'
 
 const getPageFromHash = () => {
   const pages = {
@@ -52,12 +43,6 @@ export const HomeLayout: FC = () => {
       window.removeEventListener('hashchange', hashChangeHandler)
     }
   }, [])
-
-  const [defineDialogOpen, setDefineDialogOpen] = useState(false)
-
-  const [addDialogOpen, setAddDialogOpen] = useState(false)
-
-  const [drawerOpen, setDrawerOpen] = useState(false)
 
   return (
     <>
@@ -132,13 +117,6 @@ export const HomeLayout: FC = () => {
               href="#next-actions"
               value="#next-actions"
             />
-            <Fab
-              color="primary"
-              sx={{ position: 'relative', top: '-5px' }}
-              onClick={() => setDrawerOpen(true)}
-            >
-              <Add />
-            </Fab>
             <BottomNavigationAction
               label="Concerns"
               icon={<Lightbulb />}
@@ -148,50 +126,6 @@ export const HomeLayout: FC = () => {
           </BottomNavigation>
         </Paper>
       </Paper>
-      <DefineDialog
-        open={defineDialogOpen}
-        onClose={() => setDefineDialogOpen(false)}
-      />
-
-      <AddActionDialog
-        open={addDialogOpen}
-        onClose={() => setAddDialogOpen(false)}
-      />
-
-      <Drawer
-        anchor="bottom"
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-      >
-        <List>
-          <ListItem>
-            <ListItemButton
-              onClick={() => {
-                setAddDialogOpen(true)
-                setDrawerOpen(false)
-              }}
-            >
-              <ListItemIcon>
-                <AddTask />
-              </ListItemIcon>
-              <ListItemText>Create next action</ListItemText>
-            </ListItemButton>
-          </ListItem>
-          <ListItem>
-            <ListItemButton
-              onClick={() => {
-                setDefineDialogOpen(true)
-                setDrawerOpen(false)
-              }}
-            >
-              <ListItemIcon>
-                <Create />
-              </ListItemIcon>
-              <ListItemText>Start defining</ListItemText>
-            </ListItemButton>
-          </ListItem>
-        </List>
-      </Drawer>
     </>
   )
 }
