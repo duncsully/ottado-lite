@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       devOptions: { enabled: true },
       workbox: { globPatterns: ['**/*.{js,css,html,png,svg}'] },
       includeAssets: ['public/defaultOtto.svg'],

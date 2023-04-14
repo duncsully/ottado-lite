@@ -4,11 +4,13 @@ import '@fontsource/roboto/500.css'
 import '@fontsource/roboto/700.css'
 import { CustomizedThemeProvider } from './components/CustomizedThemeProvider'
 import { HomeLayout } from './components/HomeLayout/HomeLayout'
+import { UpdateAvailableToast } from './components/UpdateAvailableToast/UpdateAvailableToast'
 
 export function App() {
   return (
     <CustomizedThemeProvider>
-      <HomeLayout></HomeLayout>
+      <UpdateAvailableToast />
+      <HomeLayout />
     </CustomizedThemeProvider>
   )
 }
