@@ -15,6 +15,8 @@ import {
   PriorityHigh,
   LocalOffer,
   Title,
+  Save,
+  Add,
 } from '@mui/icons-material'
 import { timeEstimateOptions } from '../../options'
 import { db } from '../../db'
@@ -76,12 +78,21 @@ export const NextActionForm: FC<{
     existingAction?.tags ?? ([] as string[])
   )
 
-  const canSubmit = !!actionTitle.trim()
+  const isDirty =
+    existingAction?.title !== actionTitle.trim() ||
+    existingAction?.description !== description ||
+    existingAction?.minutesEstimate !== minutesEstimate ||
+    existingAction?.effort !== effort ||
+    existingAction?.priority !== priority ||
+    existingAction?.tags.length !== selectedTags.length ||
+    existingAction?.tags.some((tag, i) => tag !== selectedTags[i])
+
+  const canSubmit = !!actionTitle.trim() && (!existingAction || isDirty)
 
   const handleSubmit: FormEventHandler = (e) => {
     e.preventDefault()
     onSubmit({
-      title: actionTitle,
+      title: actionTitle.trim(),
       description,
       minutesEstimate,
       effort,
@@ -220,8 +231,9 @@ export const NextActionForm: FC<{
             color="primary"
             disabled={!canSubmit}
             sx={{ borderRadius: '20px', ml: 'auto' }}
+            startIcon={existingAction ? <Save /> : <Add />}
           >
-            {existingAction ? 'Update next action' : 'Add next action'}
+            {existingAction ? 'Update' : 'Add'}
           </Button>
         </Stack>
       </Stack>
