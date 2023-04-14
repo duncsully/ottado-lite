@@ -25,7 +25,11 @@ export const ConcernsPage: FC = () => {
 
   const [newConcernText, setNewConcernText] = useState('')
   const handleAdd = async () => {
-    await db.concerns.add({ text: newConcernText, createdAt: Date.now() })
+    if (!newConcernText.trim()) return
+    await db.concerns.add({
+      text: newConcernText.trim(),
+      createdAt: Date.now(),
+    })
     setNewConcernText('')
   }
 
