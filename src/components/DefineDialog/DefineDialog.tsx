@@ -197,11 +197,16 @@ export const DefineDialog: FC<{ open: boolean; onClose(): void }> = ({
               )}
             </>
           ) : (
-            <OttoMessage
-              ottoComponent={<HappyOtto />}
-              title="All done!"
-              message="No more concerns to define"
-            />
+            <>
+              <OttoMessage
+                ottoComponent={<HappyOtto />}
+                title="All done!"
+                message="No more concerns to define"
+              />
+              <Button href="#next-actions" onClick={onClose}>
+                View next actions
+              </Button>
+            </>
           )}
         </Stack>
       </Dialog>
