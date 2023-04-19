@@ -4,9 +4,9 @@ import { registerSW } from 'virtual:pwa-register'
 import { Button, IconButton, Snackbar } from '@mui/material'
 import { Close } from '@mui/icons-material'
 
+let updateServiceWorker = () => {}
 export const UpdateAvailableToast: FC = () => {
   const [showToast, setShowToast] = useState(false)
-  let updateServiceWorker = () => {}
   useEffect(() => {
     updateServiceWorker = registerSW({
       onNeedRefresh() {
