@@ -203,11 +203,11 @@ export const NextActionsPage = () => {
         ))}
       </List>
       {filteredNextActions?.length > 2 && (
-        <Box alignSelf="flex-end">
-          {!showAll && <Button onClick={handleNewOptions}>New Options</Button>}
+        <Box sx={{ ml: 4 }}>
           <Button onClick={() => setShowAll((showing) => !showing)}>
             {showAll ? 'Show Less' : 'Show All'}
           </Button>
+          {!showAll && <Button onClick={handleNewOptions}>New Options</Button>}
         </Box>
       )}
     </>
@@ -300,48 +300,50 @@ export const NextActionsPage = () => {
   if (!allUncompletedNextActions) return null
 
   return (
-    <Stack height="100%">
-      <>
-        {allUncompletedNextActions?.length === 0 ? (
-          <OttoMessage
-            ottoComponent={<ConcernedOtto />}
-            title="No next actions"
-            message="Define some concerns!"
-          />
-        ) : (
-          <>
-            {filterChipsComponent}
-            {filteredNextActions?.length ? (
-              showingNextActionsComponent
-            ) : (
-              <Typography sx={{ my: 1 }}>
-                No next actions found with selected filters
-              </Typography>
-            )}
-          </>
-        )}
+    <>
+      <Stack height="100%">
+        <>
+          {allUncompletedNextActions?.length === 0 ? (
+            <OttoMessage
+              ottoComponent={<ConcernedOtto />}
+              title="No next actions"
+              message="Define some concerns!"
+            />
+          ) : (
+            <>
+              {filterChipsComponent}
+              {filteredNextActions?.length ? (
+                showingNextActionsComponent
+              ) : (
+                <Typography sx={{ my: 1 }}>
+                  No next actions found with selected filters
+                </Typography>
+              )}
+            </>
+          )}
 
-        <Divider sx={{ my: 2 }} />
-        {completedTodayNextActionsComponent}
-      </>
+          <Divider sx={{ my: 2 }} />
+          {completedTodayNextActionsComponent}
+        </>
+        {viewNextActionComponent}
+        {tagDialogComponent}
+        {addDialogComponent}
+      </Stack>
       <Zoom in>
         <Fab
           color="primary"
           sx={{
-            marginTop: 'auto',
-            alignSelf: 'flex-end',
             borderRadius: '16px',
+            position: 'absolute',
+            bottom: 72,
+            right: 16,
           }}
           onClick={() => setAddDialogOpen(true)}
         >
           <Add />
         </Fab>
       </Zoom>
-
-      {viewNextActionComponent}
-      {tagDialogComponent}
-      {addDialogComponent}
-    </Stack>
+    </>
   )
 }
 

@@ -21,7 +21,11 @@ export const UpdateAvailableToast: FC = () => {
       message="Update available!"
       action={
         <>
-          <Button color="primary" size="small" onClick={updateServiceWorker}>
+          <Button
+            color="primary"
+            size="small"
+            onClick={() => updateServiceWorker()}
+          >
             Reload
           </Button>
           <IconButton

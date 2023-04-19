@@ -104,7 +104,9 @@ export const HomeLayout: FC = () => {
             </Toolbar>
           </AppBar>
         </Box>
-        <Box sx={{ p: 2, pb: 9, flexGrow: 2, overflow: 'auto' }}>{page}</Box>
+        <Box sx={{ p: 2, pb: 1, mb: 8, flexGrow: 2, overflow: 'auto' }}>
+          {page}
+        </Box>
 
         <Paper
           sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 10 }}
