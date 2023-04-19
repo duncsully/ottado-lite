@@ -150,14 +150,11 @@ export const DefineDialog: FC<{ open: boolean; onClose(): void }> = ({
               <Typography sx={{ alignSelf: 'center' }}>
                 {concerns.length} left
               </Typography>
-              <Card elevation={5} sx={{ borderRadius: '15px', p: '1rem' }}>
-                <Stack
-                  direction="row"
-                  justifyContent="space-between"
-                  alignItems="center"
-                >
-                  <Typography>{topConcern?.text}</Typography>
-                </Stack>
+              <Card
+                elevation={5}
+                sx={{ borderRadius: '15px', p: '1rem', overflow: 'visible' }}
+              >
+                <Typography>{topConcern?.text}</Typography>
               </Card>
               {defining ? (
                 <NextActionForm
