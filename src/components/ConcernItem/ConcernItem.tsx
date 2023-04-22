@@ -19,14 +19,13 @@ export const ConcernItem: FC<{
   const handleEditKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault()
-      const newValue = (e.target as HTMLInputElement).value.trim()
-      onSubmit(newValue)
       ;(e.currentTarget as HTMLElement).blur()
     }
   }
   const [focused, setFocused] = useState(false)
   const handleBlur: React.FocusEventHandler = (e) => {
-    setValue(initialValue)
+    const newValue = (e.target as HTMLInputElement).value.trim()
+    onSubmit(newValue)
     setFocused(false)
   }
 
