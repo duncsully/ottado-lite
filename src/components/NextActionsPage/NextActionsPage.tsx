@@ -279,7 +279,7 @@ export const NextActionsPage = () => {
         </Collapse>
       </>
     ) : (
-      <Typography>No next actions completed today</Typography>
+      <Typography>No next actions finished today</Typography>
     )
 
   // --------------------------------------------------------------------------
