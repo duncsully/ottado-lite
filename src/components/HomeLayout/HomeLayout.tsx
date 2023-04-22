@@ -18,14 +18,18 @@ import {
   Checklist,
   Help,
   Lightbulb,
-  /*   Menu as MenuIcon,
-  Notifications, */
+  Notifications,
 } from '@mui/icons-material'
 import { DefaultOtto } from '../Otto/DefaultOtto'
 import { useEffect, useState, type FC } from 'react'
 import { ConcernsPage } from '../ConcernsPage/ConcernsPage'
 import { NextActionsPage } from '../NextActionsPage/NextActionsPage'
 import { HelpDialog } from '../HelpDialog/HelpDialog'
+import {
+  ReleaseNotesDialog,
+  releaseNotes,
+} from '../ReleaseNotesDialog/ReleaseNotesDialog'
+import { useReadReleaseNotes } from '../../utils/makeUseLocalStorage'
 
 const getPageFromHash = () => {
   const pages = {
@@ -60,6 +64,10 @@ export const HomeLayout: FC = () => {
 
   const [helpDialogOpen, setHelpDialogOpen] = useState(false)
 
+  const [readReleaseNotes] = useReadReleaseNotes()
+  const unreadReleaseNotes = releaseNotes.length - readReleaseNotes.length
+  const [releaseNotesDialogOpen, setReleaseNotesDialogOpen] = useState(false)
+
   return (
     <>
       <Paper
@@ -89,11 +97,11 @@ export const HomeLayout: FC = () => {
                 OttaDo
               </Typography>
               {/* TODO: Add "what's new" dialog */}
-              {/* <IconButton>
-                <Badge badgeContent={1} color="primary">
+              <IconButton onClick={() => setReleaseNotesDialogOpen(true)}>
+                <Badge badgeContent={unreadReleaseNotes} color="primary">
                   <Notifications />
                 </Badge>
-              </IconButton> */}
+              </IconButton>
               <div>
                 <IconButton
                   size="large"
@@ -159,6 +167,11 @@ export const HomeLayout: FC = () => {
           </BottomNavigation>
         </Paper>
       </Paper>
+
+      <ReleaseNotesDialog
+        open={releaseNotesDialogOpen}
+        onClose={() => setReleaseNotesDialogOpen(false)}
+      />
       <HelpDialog
         open={helpDialogOpen}
         onClose={() => setHelpDialogOpen(false)}
