@@ -1,17 +1,31 @@
 import {
   AppBar,
+  Badge,
   BottomNavigation,
   BottomNavigationAction,
   Box,
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
   Paper,
   Toolbar,
   Typography,
 } from '@mui/material'
-import { Checklist, Lightbulb } from '@mui/icons-material'
+import {
+  AccountCircle,
+  Checklist,
+  Help,
+  Lightbulb,
+  /*   Menu as MenuIcon,
+  Notifications, */
+} from '@mui/icons-material'
 import { DefaultOtto } from '../Otto/DefaultOtto'
 import { useEffect, useState, type FC } from 'react'
 import { ConcernsPage } from '../ConcernsPage/ConcernsPage'
 import { NextActionsPage } from '../NextActionsPage/NextActionsPage'
+import { HelpDialog } from '../HelpDialog/HelpDialog'
 
 const getPageFromHash = () => {
   const pages = {
@@ -27,10 +41,10 @@ const getPageFromHash = () => {
 }
 
 export const HomeLayout: FC = () => {
-  /* const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const handleClose = () => {
     setAnchorEl(null)
-  } */
+  }
 
   const [page, setPage] = useState(getPageFromHash())
 
@@ -43,6 +57,8 @@ export const HomeLayout: FC = () => {
       window.removeEventListener('hashchange', hashChangeHandler)
     }
   }, [])
+
+  const [helpDialogOpen, setHelpDialogOpen] = useState(false)
 
   return (
     <>
@@ -58,13 +74,13 @@ export const HomeLayout: FC = () => {
           <AppBar position="static">
             <Toolbar>
               {/* <IconButton
-              size="large"
-              edge="start"
-              aria-label="menu"
-              sx={{ mr: 2 }}
-            >
-              <MenuIcon />
-            </IconButton> */}
+                size="large"
+                edge="start"
+                aria-label="menu"
+                sx={{ mr: 2 }}
+              >
+                <MenuIcon />
+              </IconButton> */}
               <Box mr={2}>
                 <DefaultOtto width={40} />
               </Box>
@@ -72,35 +88,50 @@ export const HomeLayout: FC = () => {
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                 OttaDo
               </Typography>
-              {/* <div>
-              <IconButton
-                size="large"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={(e) => setAnchorEl(e.currentTarget)}
-                color="inherit"
-              >
-                <AccountCircle />
-              </IconButton>
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                open={!!anchorEl}
-                onClose={handleClose}
-              >
-                <MenuItem onClick={() => {}}>TODO</MenuItem>
-              </Menu>
-            </div> */}
+              {/* TODO: Add "what's new" dialog */}
+              {/* <IconButton>
+                <Badge badgeContent={1} color="primary">
+                  <Notifications />
+                </Badge>
+              </IconButton> */}
+              <div>
+                <IconButton
+                  size="large"
+                  aria-controls="menu-appbar"
+                  aria-haspopup="true"
+                  onClick={(e) => setAnchorEl(e.currentTarget)}
+                  color="inherit"
+                >
+                  <AccountCircle />
+                </IconButton>
+                <Menu
+                  id="menu-appbar"
+                  anchorEl={anchorEl}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  open={!!anchorEl}
+                  onClose={handleClose}
+                >
+                  <MenuItem
+                    onClick={() => {
+                      setHelpDialogOpen(true)
+                      setAnchorEl(null)
+                    }}
+                  >
+                    <ListItemIcon>
+                      <Help />
+                    </ListItemIcon>
+                    <ListItemText>Help</ListItemText>
+                  </MenuItem>
+                </Menu>
+              </div>
             </Toolbar>
           </AppBar>
         </Box>
@@ -128,6 +159,10 @@ export const HomeLayout: FC = () => {
           </BottomNavigation>
         </Paper>
       </Paper>
+      <HelpDialog
+        open={helpDialogOpen}
+        onClose={() => setHelpDialogOpen(false)}
+      />
     </>
   )
 }
