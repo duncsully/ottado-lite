@@ -61,7 +61,7 @@ type HelpTopic = keyof typeof helpTopics
 
 // TODO: Expand on topics and split out "Getting Started" into subtopics
 const helpTopics = {
-  'Getting Started': (
+  'Getting started': (
     <>
       <Typography variant="body1">
         Let's go over the basics! First, we need to go over a couple terms:
