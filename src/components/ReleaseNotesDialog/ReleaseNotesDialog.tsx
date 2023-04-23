@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, useState } from 'react'
 import { FullscreenDialog } from '../FullscreenDialog/FullscreenDialog'
 import {
   Badge,
@@ -10,7 +10,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
-import { Help, Notes } from '@mui/icons-material'
+import { Help, ImportExport, Notes } from '@mui/icons-material'
 import { useReadReleaseNotes } from '../../utils/makeUseLocalStorage'
 
 // TODO: Limit to most recent and have "show more" button
@@ -46,32 +46,36 @@ export const ReleaseNotesDialog: FC<{ open: boolean; onClose(): void }> = ({
             Mark all read
           </Button>
           <List>
-            {releaseNotes.map((note, i) => (
-              <ListItem
-                disableGutters
-                key={note.title}
-                onClick={() => {
-                  setShowingNotes(note)
-                  if (!readNotes.includes(i)) {
-                    setReadNotes([...readNotes, i])
-                  }
-                }}
-              >
-                <ListItemIcon>
-                  <Badge
-                    variant="dot"
-                    color="primary"
-                    invisible={readNotes.includes(i)}
+            {releaseNotes.reduceRight(
+              (results, note, i) =>
+                results.concat(
+                  <ListItem
+                    disableGutters
+                    key={note.title}
+                    onClick={() => {
+                      setShowingNotes(note)
+                      if (!readNotes.includes(i)) {
+                        setReadNotes([...readNotes, i])
+                      }
+                    }}
                   >
-                    {note.icon}
-                  </Badge>
-                </ListItemIcon>
-                <ListItemText
-                  primary={note.title}
-                  secondary={new Date(note.date).toLocaleDateString()}
-                />
-              </ListItem>
-            ))}
+                    <ListItemIcon>
+                      <Badge
+                        variant="dot"
+                        color="primary"
+                        invisible={readNotes.includes(i)}
+                      >
+                        {note.icon}
+                      </Badge>
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={note.title}
+                      secondary={new Date(note.date).toLocaleDateString()}
+                    />
+                  </ListItem>
+                ),
+              [] as React.ReactNode[]
+            )}
           </List>
         </Stack>
       )}
@@ -89,7 +93,7 @@ interface ReleaseNote {
 export const releaseNotes: readonly ReleaseNote[] = [
   {
     title: 'Help page',
-    date: '2021/04/21',
+    date: '2023/04/21',
     icon: <Help />,
     content: (
       <>
@@ -116,4 +120,20 @@ export const releaseNotes: readonly ReleaseNote[] = [
       </>
     ),
   },
+  /* {
+    title: 'Import/Export',
+    date: '2023/04/22',
+    icon: <ImportExport />,
+    content: (
+      <>
+        <Typography>
+          You can now import and export your data! Click/tap on the account icon
+          in the top right and select "Import/Export" in the menu. You can
+          export your data as a JSON file, and import a JSON file to replace
+          your current data. This is useful for backing up your data, or for
+          moving your data to a new device.
+        </Typography>
+      </>
+    ),
+  }, */
 ] as const
