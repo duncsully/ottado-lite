@@ -29,7 +29,7 @@ export const CustomizedThemeProvider: FC<{
           MuiButton: {
             styleOverrides: {
               root: {
-                borderRadius: '20px',
+                borderRadius: '10px',
               },
             },
           },

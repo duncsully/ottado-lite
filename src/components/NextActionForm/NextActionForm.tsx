@@ -230,7 +230,7 @@ export const NextActionForm: FC<{
             variant="contained"
             color="primary"
             disabled={!canSubmit}
-            sx={{ borderRadius: '20px', ml: 'auto' }}
+            fullWidth
             startIcon={existingAction ? <Save /> : <Add />}
           >
             {existingAction ? 'Update' : 'Add'}
