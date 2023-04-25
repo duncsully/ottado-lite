@@ -4,6 +4,7 @@ import {
   BottomNavigation,
   BottomNavigationAction,
   Box,
+  Divider,
   IconButton,
   ListItemIcon,
   ListItemText,
@@ -17,6 +18,7 @@ import {
   AccountCircle,
   Checklist,
   Help,
+  ImportExport,
   Lightbulb,
   Notifications,
 } from '@mui/icons-material'
@@ -30,6 +32,7 @@ import {
   releaseNotes,
 } from '../ReleaseNotesDialog/ReleaseNotesDialog'
 import { useReadReleaseNotes } from '../../utils/makeUseLocalStorage'
+import { ImportExportDialog } from '../ImportExportDialog/ImportExportDialog'
 
 const getPageFromHash = () => {
   const pages = {
@@ -63,6 +66,8 @@ export const HomeLayout: FC = () => {
   }, [])
 
   const [helpDialogOpen, setHelpDialogOpen] = useState(false)
+
+  const [importExportDialogOpen, setImportExportDialogOpen] = useState(false)
 
   const [readReleaseNotes] = useReadReleaseNotes()
   const unreadReleaseNotes = releaseNotes.length - readReleaseNotes.length
@@ -129,6 +134,18 @@ export const HomeLayout: FC = () => {
                 >
                   <MenuItem
                     onClick={() => {
+                      setImportExportDialogOpen(true)
+                      setAnchorEl(null)
+                    }}
+                  >
+                    <ListItemIcon>
+                      <ImportExport />
+                    </ListItemIcon>
+                    <ListItemText>Import/Export</ListItemText>
+                  </MenuItem>
+                  <Divider />
+                  <MenuItem
+                    onClick={() => {
                       setHelpDialogOpen(true)
                       setAnchorEl(null)
                     }}
@@ -171,6 +188,10 @@ export const HomeLayout: FC = () => {
       <ReleaseNotesDialog
         open={releaseNotesDialogOpen}
         onClose={() => setReleaseNotesDialogOpen(false)}
+      />
+      <ImportExportDialog
+        open={importExportDialogOpen}
+        onClose={() => setImportExportDialogOpen(false)}
       />
       <HelpDialog
         open={helpDialogOpen}

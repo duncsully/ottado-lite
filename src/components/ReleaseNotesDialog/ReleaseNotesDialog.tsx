@@ -98,10 +98,10 @@ export const releaseNotes: readonly ReleaseNote[] = [
     content: (
       <>
         <Typography>
-          You can now access the help page by clicking/tapping on the account
-          icon in the top right and selecting "Help" in the menu. There is a
-          "Getting started" topic that goes over the basics. More topics will be
-          added in the future.
+          You can now access the help page by clicking the account icon in the
+          top right and selecting "Help" in the menu. There is a "Getting
+          started" topic that goes over the basics. More topics will be added in
+          the future.
         </Typography>
       </>
     ),
@@ -115,25 +115,25 @@ export const releaseNotes: readonly ReleaseNote[] = [
         <Typography>
           OttaDo now has release notes! As you've probably already figured out,
           the bell icon in the top right will show a notification dot when there
-          are updates. Click/tap on the bell icon to see what's new!
+          are updates. Click the bell icon to see what's new!
         </Typography>
       </>
     ),
   },
-  /* {
+  {
     title: 'Import/Export',
-    date: '2023/04/22',
+    date: '2023/04/24',
     icon: <ImportExport />,
     content: (
       <>
         <Typography>
-          You can now import and export your data! Click/tap on the account icon
-          in the top right and select "Import/Export" in the menu. You can
-          export your data as a JSON file, and import a JSON file to replace
-          your current data. This is useful for backing up your data, or for
-          moving your data to a new device.
+          You can now import and export your data! Click the account icon in the
+          top right and select "Import/Export" in the menu. You can export your
+          data as a JSON file, and import a JSON file to replace your current
+          data. This is useful for backing up your data or moving your data to a
+          different device.
         </Typography>
       </>
     ),
-  }, */
+  },
 ] as const
