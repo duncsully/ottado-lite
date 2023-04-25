@@ -105,15 +105,14 @@ const helpTopics = {
         Capture concerns
       </Typography>
       <Typography variant="body1">
-        You can list concerns on the Concerns page accessed via clicking/tapping
-        the "Concerns" tab. It's recommended to add concerns as they come to
-        you, getting them out of your head so you can continue to focus on other
-        tasks. Add a concern by clicking/tapping the textbox at the bottom,
-        typing in a concern, and pressing enter or clicking/tapping the plus
-        button in the textbox.
+        You can list concerns on the Concerns page accessed via clicking the
+        "Concerns" tab. It's recommended to add concerns as they come to you,
+        getting them out of your head so you can continue to focus on other
+        tasks. Add a concern by clicking the textbox at the bottom, typing in a
+        concern, and pressing enter or clicking the plus button in the textbox.
       </Typography>
       <Typography variant="body1">
-        You can tap on a concern in the list to edit or delete it.
+        You can click on a concern in the list to edit or delete it.
       </Typography>
       <Typography variant="h5" mt={1}>
         Clarify concerns
@@ -121,12 +120,12 @@ const helpTopics = {
       <Typography variant="body1">
         It's recommended to go through your concerns list on a regular basis
         when you have the time and energy to do so. You can start the process by
-        clicking/tapping the large pencil button on the Concerns page on the
-        bottom right. This will open a view where you will handle each concern
-        one at a time. If a concern is no longer relevant, you can delete it by
-        clicking/tapping the three dots menu button in the top right, and then
-        click/tap delete. Otherwise, you can define a next action with the
-        "Define a next action" button.
+        clicking the large pencil button on the Concerns page on the bottom
+        right. This will open a view where you will handle each concern one at a
+        time. If a concern is no longer relevant, you can delete it by clicking
+        the three dots menu button in the top right, and then click delete.
+        Otherwise, you can define a next action with the "Define a next action"
+        button.
       </Typography>
       <Typography variant="body1">
         To define an action, all that is required is a title. It should be
@@ -134,13 +133,12 @@ const helpTopics = {
         You can also add a description with more details. It's highly recommend
         that you also add an estimated time and effort amounts. These will help
         you filter next actions later. Additionally, you can add any tags you
-        want. When you've finished defining the action, click/tap the add
-        button.
+        want. When you've finished defining the action, click the add button.
       </Typography>
       <Typography variant="body1">
         You can add as many next actions as you want to a concern. You can also
-        click/tap a next action to edit or delete it. When you're done defining,
-        click/tap the "Done with concern" button to move onto the next concern.
+        click a next action to edit or delete it. When you're done defining,
+        click the "Done with concern" button to move onto the next concern.
         Repeat the process until you've handled all of your concerns.
       </Typography>
 
@@ -149,24 +147,24 @@ const helpTopics = {
       </Typography>
       <Typography variant="body1">
         You can review your next actions on the Next Actions page accessed via
-        clicking/tapping the "Next Actions" tab. You should check this page
-        whenever you have a spare moment.
+        clicking the "Next Actions" tab. You should check this page whenever you
+        have a spare moment.
       </Typography>
       <Typography variant="body1">
         By default, you will see your two highest priority next actions. Only
         two items are shown so as not to overwhelm you. You can see the next two
-        highest priority actions by clicking/tapping the "New options" button.
-        Alternatively, you can click/tap the "Show all" button to see all of
-        your next actions. You can filter what next actions are shown by
-        clicking/tapping the Effort and/or Time buttons and selecting the
-        desired values. Additionally, clicking/tapping the button in the top
-        right will allow you to sort next actions within their priorities by the
-        amount of matching tags.
+        highest priority actions by clicking the "New options" button.
+        Alternatively, you can click the "Show all" button to see all of your
+        next actions. You can filter what next actions are shown by clicking the
+        Effort and/or Time buttons and selecting the desired values.
+        Additionally, clicking the button in the top right will allow you to
+        sort next actions within their priorities by the amount of matching
+        tags.
       </Typography>
       <Typography variant="body1">
         Click on a next action to see more details and edit it. You can delete
-        the next action by clicking/tapping the three dots menu button in the
-        top right, and then click/tap delete.
+        the next action by clicking the three dots menu button in the top right,
+        and then click delete.
       </Typography>
 
       <Typography variant="h5" mt={1}>
