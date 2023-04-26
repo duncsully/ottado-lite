@@ -16,7 +16,7 @@ import {
   Typography,
   Zoom,
 } from '@mui/material'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { SelectChip } from '../SelectChip/SelectChip'
 import { timeEstimateOptions } from '../../options'
 import { Effort, NextAction, Option, Tag } from '../../types'
@@ -55,7 +55,7 @@ export const NextActionsPage = () => {
   // --------------------------------------------------------------------------
   const [selectedTags, setSelectedTags] = useState<Tag[]>([])
   const [tagDialogOpen, setTagDialogOpen] = useState(false)
-  const tags = useLiveQuery(() => db.tags.orderBy('name').toArray(), [])
+  const tags = useLiveQuery(() => db.tags.orderBy('usedCount').toArray(), [])
 
   const tagDialogComponent = (
     <Dialog
@@ -63,7 +63,7 @@ export const NextActionsPage = () => {
       onClose={() => setTagDialogOpen(false)}
       fullWidth
     >
-      <DialogTitle>Prioritize tags</DialogTitle>
+      <DialogTitle>Filter tags</DialogTitle>
       <DialogContent>
         <Autocomplete
           value={selectedTags}
@@ -78,7 +78,12 @@ export const NextActionsPage = () => {
           autoHighlight
           disableCloseOnSelect
           renderInput={(params) => (
-            <TextField {...params} variant="filled" label="Tags" />
+            <TextField
+              {...params}
+              variant="filled"
+              label="Tags"
+              helperText="Only show actions that have at least one of the selected tags"
+            />
           )}
         />
       </DialogContent>
@@ -96,8 +101,46 @@ export const NextActionsPage = () => {
     undefined
   )
 
+  const stackRef = useRef<HTMLDivElement>(null)
+  const [scrollPosition, setScrollPosition] = useState({
+    left: false,
+    right: false,
+  })
+
+  useEffect(() => {
+    if (!stackRef.current) return
+    const handleScroll = () => {
+      const { scrollLeft, scrollWidth, clientWidth } = stackRef.current!
+      setScrollPosition({
+        left: scrollLeft > 0,
+        right: scrollLeft < scrollWidth - clientWidth,
+      })
+    }
+    const stackElement = stackRef.current!
+    stackElement.addEventListener('scroll', handleScroll)
+    handleScroll()
+    return () => stackElement.removeEventListener('scroll', handleScroll)
+  }, [stackRef.current])
+
+  const gradient = `linear-gradient(to ${
+    scrollPosition.right ? 'right' : 'left'
+  }, transparent, white ${
+    scrollPosition.left && scrollPosition.right ? '15%' : '0'
+  }, white 85%, transparent)`
+
   const filterChipsComponent = (
-    <Stack direction="row" gap="8px" mb={1}>
+    <Stack
+      direction="row"
+      gap="8px"
+      mb={1}
+      width="100%"
+      overflow="auto"
+      sx={{
+        maskImage:
+          scrollPosition.left || scrollPosition.right ? gradient : 'none',
+      }}
+      ref={stackRef}
+    >
       <SelectChip
         label="Effort"
         options={effortOptions}
@@ -112,6 +155,22 @@ export const NextActionsPage = () => {
         value={timeEstimate}
         onChange={(value) => setTimeEstimate(value)}
       />
+      {/* TODO: Should this be most _used_ tags or most _filtered by_ tags? */}
+      {tags?.slice(0, 5).map((tag) => (
+        <Chip
+          key={tag.id}
+          label={tag.name}
+          variant={selectedTags.includes(tag) ? 'filled' : 'outlined'}
+          color={selectedTags.includes(tag) ? 'secondary' : 'default'}
+          onClick={() =>
+            setSelectedTags((selectedTags) =>
+              selectedTags.includes(tag)
+                ? selectedTags.filter((t) => t.id !== tag.id)
+                : [...selectedTags, tag]
+            )
+          }
+        />
+      ))}
       <Chip
         label={<FilterList />}
         variant={selectedTags.length ? 'filled' : 'outlined'}
@@ -143,7 +202,11 @@ export const NextActionsPage = () => {
             !nextAction.effort ||
             nextAction.effort <= (effort?.value ?? Effort.High)
 
-          return withinMinutes && withinEffort
+          const hasSomeMatchingTags =
+            !selectedTags.length ||
+            selectedTags.some((tag) => nextAction.tags?.includes(tag.name))
+
+          return withinMinutes && withinEffort && hasSomeMatchingTags
         })
         .sort((a, b) => {
           if (a.priority === b.priority) {

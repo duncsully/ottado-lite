@@ -10,7 +10,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
-import { Help, ImportExport, Notes } from '@mui/icons-material'
+import { FilterList, Help, ImportExport, Notes } from '@mui/icons-material'
 import { useReadReleaseNotes } from '../../utils/makeUseLocalStorage'
 
 // TODO: Limit to most recent and have "show more" button
@@ -132,6 +132,23 @@ export const releaseNotes: readonly ReleaseNote[] = [
           data as a JSON file, and import a JSON file to replace your current
           data. This is useful for backing up your data or moving your data to a
           different device.
+        </Typography>
+      </>
+    ),
+  },
+  {
+    title: 'Filter by tags',
+    date: '2023/04/25',
+    icon: <FilterList />,
+    content: (
+      <>
+        <Typography>
+          Your top five most commonly used tags are now shown along the top and
+          can be used to filter your next actions! Additionally, the filter
+          dialog's functionality has been adjusted to match the new tag
+          filtering logic. Only next actions with at least one of the selected
+          tags will be shown. Next actions of the same priority will be sorted
+          in descending order by the amount of selected tags they have.
         </Typography>
       </>
     ),

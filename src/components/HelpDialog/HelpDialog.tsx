@@ -156,10 +156,15 @@ const helpTopics = {
         highest priority actions by clicking the "New options" button.
         Alternatively, you can click the "Show all" button to see all of your
         next actions. You can filter what next actions are shown by clicking the
-        Effort and/or Time buttons and selecting the desired values.
-        Additionally, clicking the button in the top right will allow you to
-        sort next actions within their priorities by the amount of matching
-        tags.
+        Effort and/or Time buttons and selecting the desired values.{' '}
+      </Typography>
+      <Typography variant="body1">
+        Additionally, your top five most used tags are shown at the top to the
+        right of the Effort and Time buttons. Clicking any tag button will
+        filter the next actions to only those with any of the selected tags,
+        prioritizing those with more matching tags. The rest of your tags are
+        available when you click the filter button to the far right of your top
+        five tags.
       </Typography>
       <Typography variant="body1">
         Click on a next action to see more details and edit it. You can delete
