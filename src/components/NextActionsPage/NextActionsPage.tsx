@@ -204,7 +204,12 @@ export const NextActionsPage = () => {
       </List>
       {filteredNextActions?.length > 2 && (
         <Box sx={{ ml: 4 }}>
-          <Button onClick={() => setShowAll((showing) => !showing)}>
+          <Button
+            onClick={() => {
+              setShowAll((showing) => !showing)
+              setShowingIndex(0)
+            }}
+          >
             {showAll ? 'Show Less' : 'Show All'}
           </Button>
           {!showAll && <Button onClick={handleNewOptions}>New Options</Button>}
