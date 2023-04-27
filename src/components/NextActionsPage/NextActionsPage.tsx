@@ -134,6 +134,7 @@ export const NextActionsPage = () => {
       gap="8px"
       mb={1}
       width="100%"
+      flexShrink={0}
       overflow="auto"
       sx={{
         maskImage:
