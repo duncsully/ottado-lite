@@ -20,7 +20,7 @@ export const makeUseLocalStorage = <T>(key: string, initialValue: T) => {
         value instanceof Function ? value(storedValue) : value
       updaters.forEach((updater) => updater(valueToStore))
       try {
-        window.localStorage.setItem(key, JSON.stringify(value))
+        window.localStorage.setItem(key, JSON.stringify(valueToStore))
       } catch (error) {
         console.log(error)
       }
@@ -32,8 +32,13 @@ export const makeUseLocalStorage = <T>(key: string, initialValue: T) => {
         updaters.delete(setStoredValue)
       }
     }, [key])
-    return [storedValue, setValue]
+    return [storedValue as T, setValue] as const
   }
 }
 
 export const useReadReleaseNotes = makeUseLocalStorage('readNotes', [])
+
+export const useSearchIncludeCompleted = makeUseLocalStorage(
+  'includeCompleted',
+  false
+)
