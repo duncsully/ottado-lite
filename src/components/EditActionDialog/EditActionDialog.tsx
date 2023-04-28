@@ -1,5 +1,4 @@
 import {
-  AppBar,
   Box,
   Button,
   Dialog,
@@ -10,20 +9,19 @@ import {
   IconButton,
   Menu,
   MenuItem,
-  Toolbar,
-  Typography,
 } from '@mui/material'
 import { useState, type FC } from 'react'
-import { Transition } from '../FullscreenDialogTransition/FullScreenDialogTransition'
-import { Close, MoreVert } from '@mui/icons-material'
+import { MoreVert } from '@mui/icons-material'
 import { db } from '../../db'
 import { NextAction } from '../../types'
 import { NextActionForm } from '../NextActionForm/NextActionForm'
+import { FullscreenDialog } from '../FullscreenDialog/FullscreenDialog'
 
-export const EditActionDialog: FC<{ action?: NextAction; onClose(): void }> = ({
-  action,
-  onClose,
-}) => {
+export const EditActionDialog: FC<{
+  action?: NextAction
+  onClose(): void
+  back?: boolean
+}> = ({ action, onClose, back }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const handleClose = () => {
     setAnchorEl(null)
@@ -64,21 +62,13 @@ export const EditActionDialog: FC<{ action?: NextAction; onClose(): void }> = ({
 
   return (
     <>
-      <Dialog
-        fullScreen
+      <FullscreenDialog
         open={!!action}
         onClose={onClose}
-        sx={{ backgroundColor: 'unset' }}
-        TransitionComponent={Transition}
-      >
-        <AppBar sx={{ position: 'relative' }}>
-          <Toolbar>
-            <IconButton edge="start" onClick={onClose}>
-              <Close />
-            </IconButton>
-            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              Edit next action
-            </Typography>
+        back={back}
+        title="Edit next action"
+        toolbarActions={
+          <>
             <IconButton
               edge="end"
               onClick={(e) => setAnchorEl(e.currentTarget)}
@@ -108,12 +98,13 @@ export const EditActionDialog: FC<{ action?: NextAction; onClose(): void }> = ({
                 Delete
               </MenuItem>
             </Menu>
-          </Toolbar>
-        </AppBar>
+          </>
+        }
+      >
         <Box p={2}>
           <NextActionForm existingAction={action} onSubmit={handleSubmit} />
         </Box>
-      </Dialog>
+      </FullscreenDialog>
       <Dialog
         open={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
