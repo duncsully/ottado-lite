@@ -4,9 +4,8 @@ import { NextAction } from '../../types'
 export const NextActionItem: React.FC<{
   nextAction: NextAction
   onToggle?(): void
-  checked?: boolean
   onClick(): void
-}> = ({ nextAction, onToggle, checked, onClick }) => {
+}> = ({ nextAction, onToggle, onClick }) => {
   return (
     <ListItem key={nextAction.id} disableGutters>
       {onToggle && (
@@ -14,7 +13,7 @@ export const NextActionItem: React.FC<{
           edge="start"
           sx={{ mr: 1 }}
           onChange={onToggle}
-          checked={checked}
+          checked={!!nextAction.completedAt}
         />
       )}
       <Card

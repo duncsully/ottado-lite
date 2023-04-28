@@ -30,7 +30,6 @@ import { ConcernedOtto } from '../Otto/ConcernedOtto'
 import { AddActionDialog } from '../AddActionDialog.tsx/AddActionDialog'
 
 // TODO: Transitions?
-// TODO: Common tags across top?
 // TODO: Advanced tag filtering? (All of, Any of, Not, etc.)
 // TODO: Add a location filter?
 
@@ -334,7 +333,6 @@ export const NextActionsPage = () => {
                 nextAction={nextAction}
                 onToggle={() => handleToggle(nextAction)}
                 onClick={() => setViewingAction(nextAction)}
-                checked
               />
             ))}
           </List>
