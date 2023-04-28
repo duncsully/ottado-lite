@@ -21,6 +21,7 @@ import {
   ImportExport,
   Lightbulb,
   Notifications,
+  Search,
 } from '@mui/icons-material'
 import { DefaultOtto } from '../Otto/DefaultOtto'
 import { useEffect, useState, type FC } from 'react'
@@ -33,6 +34,9 @@ import {
 } from '../ReleaseNotesDialog/ReleaseNotesDialog'
 import { useReadReleaseNotes } from '../../utils/makeUseLocalStorage'
 import { ImportExportDialog } from '../ImportExportDialog/ImportExportDialog'
+import { SearchNextActionsDialog } from '../SearchNextActionsDialog/SearchNextActionsDialog'
+import { EditActionDialog } from '../EditActionDialog/EditActionDialog'
+import { type NextAction } from '../../types'
 
 const getPageFromHash = () => {
   const pages = {
@@ -73,6 +77,12 @@ export const HomeLayout: FC = () => {
   const unreadReleaseNotes = releaseNotes.length - readReleaseNotes.length
   const [releaseNotesDialogOpen, setReleaseNotesDialogOpen] = useState(false)
 
+  const [searchDialogOpen, setSearchDialogOpen] = useState(false)
+
+  const [viewingAction, setViewingAction] = useState<NextAction | undefined>(
+    undefined
+  )
+
   return (
     <>
       <Paper
@@ -101,7 +111,12 @@ export const HomeLayout: FC = () => {
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                 OttaDo
               </Typography>
-              {/* TODO: Add "what's new" dialog */}
+              {/* TODO: Improve logic for dynamic app bar */}
+              {location.hash === '#next-actions' && (
+                <IconButton onClick={() => setSearchDialogOpen(true)}>
+                  <Search />
+                </IconButton>
+              )}
               <IconButton onClick={() => setReleaseNotesDialogOpen(true)}>
                 <Badge badgeContent={unreadReleaseNotes} color="primary">
                   <Notifications />
@@ -196,6 +211,16 @@ export const HomeLayout: FC = () => {
       <HelpDialog
         open={helpDialogOpen}
         onClose={() => setHelpDialogOpen(false)}
+      />
+      <SearchNextActionsDialog
+        open={searchDialogOpen}
+        onClose={() => setSearchDialogOpen(false)}
+        onClickNextAction={setViewingAction}
+      />
+      <EditActionDialog
+        action={viewingAction}
+        onClose={() => setViewingAction(undefined)}
+        back
       />
     </>
   )

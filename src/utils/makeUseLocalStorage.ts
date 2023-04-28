@@ -36,7 +36,10 @@ export const makeUseLocalStorage = <T>(key: string, initialValue: T) => {
   }
 }
 
-export const useReadReleaseNotes = makeUseLocalStorage('readNotes', [])
+export const useReadReleaseNotes = makeUseLocalStorage(
+  'readNotes',
+  [] as number[]
+)
 
 export const useSearchIncludeCompleted = makeUseLocalStorage(
   'includeCompleted',

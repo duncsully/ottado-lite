@@ -10,7 +10,13 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
-import { FilterList, Help, ImportExport, Notes } from '@mui/icons-material'
+import {
+  FilterList,
+  Help,
+  ImportExport,
+  Notes,
+  Search,
+} from '@mui/icons-material'
 import { useReadReleaseNotes } from '../../utils/makeUseLocalStorage'
 
 // TODO: Limit to most recent and have "show more" button
@@ -149,6 +155,20 @@ export const releaseNotes: readonly ReleaseNote[] = [
           filtering logic. Only next actions with at least one of the selected
           tags will be shown. Next actions of the same priority will be sorted
           in descending order by the amount of selected tags they have.
+        </Typography>
+      </>
+    ),
+  },
+  {
+    title: 'Search next actions',
+    date: '2023/04/28',
+    icon: <Search />,
+    content: (
+      <>
+        <Typography>
+          You can now search your next actions! Click the search icon in the top
+          right on the Next Actions page to open the search dialog. You can
+          toggle whether you want to search completed actions too.
         </Typography>
       </>
     ),
