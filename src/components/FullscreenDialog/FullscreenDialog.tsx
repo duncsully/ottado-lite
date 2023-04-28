@@ -16,7 +16,8 @@ export const FullscreenDialog: FC<{
   back?: boolean
   title: string
   children: React.ReactNode
-}> = ({ open, onClose, back, title, children }) => {
+  toolbarActions?: React.ReactNode
+}> = ({ open, onClose, back, title, children, toolbarActions }) => {
   return (
     <Dialog
       fullScreen
@@ -33,6 +34,7 @@ export const FullscreenDialog: FC<{
           <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
             {title}
           </Typography>
+          {toolbarActions}
         </Toolbar>
       </AppBar>
       <Box pt={7}>{children}</Box>
