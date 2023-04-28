@@ -101,32 +101,25 @@ export const NextActionsPage = () => {
     undefined
   )
 
-  const stackRef = useRef<HTMLDivElement>(null)
-  const [scrollPosition, setScrollPosition] = useState({
-    left: false,
-    right: false,
-  })
+  const [gradient, setGradient] = useState('none')
+  const handleScroll = (element: HTMLDivElement | null) => {
+    if (!element) return
+    const { scrollLeft, scrollWidth, clientWidth } = element
+    const canScrollLeft = scrollLeft > 0
+    const canScrollRight = scrollLeft < scrollWidth - clientWidth
 
-  useEffect(() => {
-    if (!stackRef.current) return
-    const handleScroll = () => {
-      const { scrollLeft, scrollWidth, clientWidth } = stackRef.current!
-      setScrollPosition({
-        left: scrollLeft > 0,
-        right: scrollLeft < scrollWidth - clientWidth,
-      })
+    if (canScrollLeft || canScrollRight) {
+      setGradient(
+        `linear-gradient(to ${
+          canScrollRight ? 'right' : 'left'
+        }, transparent, white ${
+          canScrollLeft && canScrollRight ? '15%' : '0'
+        }, white 85%, transparent)`
+      )
+    } else {
+      setGradient('none')
     }
-    const stackElement = stackRef.current!
-    stackElement.addEventListener('scroll', handleScroll)
-    handleScroll()
-    return () => stackElement.removeEventListener('scroll', handleScroll)
-  }, [stackRef.current])
-
-  const gradient = `linear-gradient(to ${
-    scrollPosition.right ? 'right' : 'left'
-  }, transparent, white ${
-    scrollPosition.left && scrollPosition.right ? '15%' : '0'
-  }, white 85%, transparent)`
+  }
 
   const filterChipsComponent = (
     <Stack
@@ -137,10 +130,10 @@ export const NextActionsPage = () => {
       flexShrink={0}
       overflow="auto"
       sx={{
-        maskImage:
-          scrollPosition.left || scrollPosition.right ? gradient : 'none',
+        maskImage: gradient,
       }}
-      ref={stackRef}
+      ref={handleScroll}
+      onScroll={(e) => handleScroll(e.currentTarget)}
     >
       <SelectChip
         label="Effort"
