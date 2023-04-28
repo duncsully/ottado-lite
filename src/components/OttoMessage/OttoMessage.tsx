@@ -5,7 +5,7 @@ import { type FC } from 'react'
 export const OttoMessage: FC<{
   ottoComponent: React.ReactNode
   title: string
-  message: string
+  message?: string
 }> = ({ ottoComponent, title, message }) => {
   return (
     <Stack
