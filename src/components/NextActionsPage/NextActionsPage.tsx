@@ -16,10 +16,10 @@ import {
   Typography,
   Zoom,
 } from '@mui/material'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { SelectChip } from '../SelectChip/SelectChip'
 import { timeEstimateOptions } from '../../options'
-import { Effort, NextAction, Option, Tag } from '../../types'
+import { Effort, type NextAction, type Option, type Tag } from '../../types'
 import { Add, ExpandMore, FilterList } from '@mui/icons-material'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../../db'
@@ -253,7 +253,7 @@ export const NextActionsPage = () => {
           <NextActionItem
             key={nextAction.id}
             nextAction={nextAction}
-            onToggle={() => handleToggle(nextAction)}
+            showCheckbox
             onClick={() => setViewingAction(nextAction)}
           />
         ))}
@@ -331,7 +331,7 @@ export const NextActionsPage = () => {
               <NextActionItem
                 key={nextAction.id}
                 nextAction={nextAction}
-                onToggle={() => handleToggle(nextAction)}
+                showCheckbox
                 onClick={() => setViewingAction(nextAction)}
               />
             ))}

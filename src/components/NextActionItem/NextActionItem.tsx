@@ -1,18 +1,24 @@
 import { Card, Checkbox, ListItem, ListItemText } from '@mui/material'
 import { NextAction } from '../../types'
+import { db } from '../../db'
 
 export const NextActionItem: React.FC<{
   nextAction: NextAction
-  onToggle?(): void
+  showCheckbox?: boolean
   onClick(): void
-}> = ({ nextAction, onToggle, onClick }) => {
+}> = ({ nextAction, showCheckbox, onClick }) => {
+  const handleToggle = () => {
+    db.nextActions.update(nextAction.id!, {
+      completedAt: nextAction.completedAt ? 0 : Date.now(),
+    })
+  }
   return (
     <ListItem key={nextAction.id} disableGutters>
-      {onToggle && (
+      {showCheckbox && (
         <Checkbox
           edge="start"
           sx={{ mr: 1 }}
-          onChange={onToggle}
+          onChange={handleToggle}
           checked={!!nextAction.completedAt}
         />
       )}
