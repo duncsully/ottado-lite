@@ -45,7 +45,7 @@ export const EditActionDialog: FC<{
           const query = db.tags.where('name').equals(tag)
           return query.count((count) => {
             if (count === 0) {
-              return db.tags.add({ name: tag, usedCount: 1 })
+              return db.tags.add({ name: tag, usedCount: 1, filteredCount: 0 })
             }
             return query.modify((currentTag) => {
               currentTag.usedCount++
