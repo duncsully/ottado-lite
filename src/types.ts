@@ -37,6 +37,7 @@ export interface Tag {
   name: string
   category?: string
   usedCount: number
+  filteredCount: number
 }
 
 export interface Option<T> {

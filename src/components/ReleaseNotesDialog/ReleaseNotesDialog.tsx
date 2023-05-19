@@ -173,4 +173,18 @@ export const releaseNotes: readonly ReleaseNote[] = [
       </>
     ),
   },
+  {
+    title: 'Filter tag improvements',
+    date: '2023/05/18',
+    icon: <FilterList />,
+    content: (
+      <>
+        <Typography>
+          The tag filter chips at the top of the Next Actions page have been
+          improved! Now your top five most <em>filtered by</em> tags will be
+          shown (as opposed to top five most used tags).
+        </Typography>
+      </>
+    ),
+  },
 ] as const

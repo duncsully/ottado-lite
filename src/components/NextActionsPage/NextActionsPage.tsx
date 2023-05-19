@@ -53,8 +53,22 @@ export const NextActionsPage = () => {
   // Tag dialog
   // --------------------------------------------------------------------------
   const [selectedTags, setSelectedTags] = useState<Tag[]>([])
+  const handleChangeSelectedTags = (tags: Tag[]) => {
+    // Get all new tags that were added
+    const newTags = tags.filter(
+      (tag) => !selectedTags.some((selectedTag) => tag.id === selectedTag.id)
+    )
+    // Update filteredCounter for all new tags
+    newTags.forEach((tag) => {
+      db.tags.update(tag.id!, { filteredCount: tag.filteredCount + 1 })
+    })
+    setSelectedTags(tags)
+  }
   const [tagDialogOpen, setTagDialogOpen] = useState(false)
-  const tags = useLiveQuery(() => db.tags.orderBy('usedCount').toArray(), [])
+  const tags = useLiveQuery(
+    () => db.tags.orderBy('filteredCount').reverse().toArray(),
+    []
+  )
 
   const tagDialogComponent = (
     <Dialog
@@ -66,7 +80,7 @@ export const NextActionsPage = () => {
       <DialogContent>
         <Autocomplete
           value={selectedTags}
-          onChange={(_, value) => setSelectedTags(value)}
+          onChange={(_, value) => handleChangeSelectedTags(value)}
           options={tags ?? []}
           getOptionLabel={(tag) => tag.name}
           loading={!tags}
@@ -76,6 +90,7 @@ export const NextActionsPage = () => {
           autoComplete
           autoHighlight
           disableCloseOnSelect
+          isOptionEqualToValue={(option, value) => option.id === value.id}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -148,22 +163,27 @@ export const NextActionsPage = () => {
         value={timeEstimate}
         onChange={(value) => setTimeEstimate(value)}
       />
-      {/* TODO: Should this be most _used_ tags or most _filtered by_ tags? */}
-      {tags?.slice(0, 5).map((tag) => (
-        <Chip
-          key={tag.id}
-          label={tag.name}
-          variant={selectedTags.includes(tag) ? 'filled' : 'outlined'}
-          color={selectedTags.includes(tag) ? 'secondary' : 'default'}
-          onClick={() =>
-            setSelectedTags((selectedTags) =>
-              selectedTags.includes(tag)
-                ? selectedTags.filter((t) => t.id !== tag.id)
-                : [...selectedTags, tag]
-            )
-          }
-        />
-      ))}
+
+      {tags?.slice(0, 5).map((tag) => {
+        const isSelected = selectedTags.some(
+          (selectedTag) => selectedTag.id === tag.id
+        )
+        return (
+          <Chip
+            key={tag.id}
+            label={tag.name}
+            variant={isSelected ? 'filled' : 'outlined'}
+            color={isSelected ? 'secondary' : 'default'}
+            onClick={() =>
+              handleChangeSelectedTags(
+                isSelected
+                  ? selectedTags.filter((t) => t.id !== tag.id)
+                  : [...selectedTags, tag]
+              )
+            }
+          />
+        )
+      })}
       <Chip
         label={<FilterList />}
         variant={selectedTags.length ? 'filled' : 'outlined'}

@@ -8,12 +8,21 @@ export class OttaDoDB extends Dexie {
 
   constructor() {
     super('OttaDoDB')
-    this.version(5).stores({
-      concerns: '++id, createdAt',
-      nextActions:
-        '++id, createdAt, minutesEstimate, effort, priority, *tags, completedAt, concernId',
-      tags: '++id, name, category, usedCount',
-    })
+    this.version(6)
+      .stores({
+        concerns: '++id, createdAt',
+        nextActions:
+          '++id, createdAt, minutesEstimate, effort, priority, *tags, completedAt, concernId',
+        tags: '++id, name, category, usedCount, filteredCount',
+      })
+      .upgrade(async (tx) => {
+        return tx
+          .table('tags')
+          .toCollection()
+          .modify((tag) => {
+            tag.filteredCount = 0
+          })
+      })
   }
 }
 
