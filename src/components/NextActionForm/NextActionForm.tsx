@@ -2,11 +2,18 @@ import {
   Autocomplete,
   Button,
   InputAdornment,
+  ListSubheader,
   MenuItem,
   Stack,
   TextField,
 } from '@mui/material'
-import { FormEventHandler, useState, type ReactNode, type FC } from 'react'
+import {
+  FormEventHandler,
+  useState,
+  type ReactNode,
+  type FC,
+  useMemo,
+} from 'react'
 import { Effort, NextAction, Priority } from '../../types'
 import {
   Notes,
@@ -17,6 +24,7 @@ import {
   Title,
   Save,
   Add,
+  DoNotDisturb,
 } from '@mui/icons-material'
 import { timeEstimateOptions } from '../../options'
 import { db } from '../../db'
@@ -78,6 +86,14 @@ export const NextActionForm: FC<{
     existingAction?.tags ?? ([] as string[])
   )
 
+  const incompleteNextActions = useLiveQuery(() =>
+    db.nextActions.where('completedAt').equals(0).toArray()
+  )
+
+  const [dependencies, setDependencies] = useState(
+    existingAction?.dependencies ?? []
+  )
+
   const isDirty =
     existingAction?.title !== actionTitle.trim() ||
     existingAction?.description !== description ||
@@ -85,7 +101,9 @@ export const NextActionForm: FC<{
     existingAction?.effort !== effort ||
     existingAction?.priority !== priority ||
     existingAction?.tags.length !== selectedTags.length ||
-    existingAction?.tags.some((tag, i) => tag !== selectedTags[i])
+    existingAction?.tags.some((tag, i) => tag !== selectedTags[i]) ||
+    existingAction?.dependencies.length !== dependencies.length ||
+    existingAction?.dependencies.some((dep, i) => dep !== dependencies[i])
 
   const canSubmit = !!actionTitle.trim() && (!existingAction || isDirty)
 
@@ -100,6 +118,7 @@ export const NextActionForm: FC<{
       tags: selectedTags,
       createdAt: existingAction?.createdAt ?? Date.now(),
       completedAt: existingAction?.completedAt ?? 0,
+      dependencies,
     })
   }
   return (
@@ -224,6 +243,41 @@ export const NextActionForm: FC<{
             />
           )}
         />
+        <Autocomplete
+          multiple
+          options={incompleteNextActions ?? ([] as NextAction[])}
+          loading={!incompleteNextActions}
+          getOptionLabel={(option) => option.title}
+          value={
+            incompleteNextActions?.filter((nextAction) =>
+              dependencies.includes(nextAction.id!)
+            ) ?? ([] as NextAction[])
+          }
+          onChange={(_, value) => {
+            setDependencies(value.map((nextAction) => nextAction.id!))
+          }}
+          size="small"
+          fullWidth
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              variant="filled"
+              label="Prerequisites"
+              InputProps={{
+                ...params.InputProps,
+                startAdornment: (
+                  <>
+                    <InputAdornment position="start">
+                      <DoNotDisturb sx={{ mt: '-16px' }} />
+                    </InputAdornment>
+                    {params.InputProps.startAdornment}
+                  </>
+                ),
+              }}
+            />
+          )}
+        />
+
         <Stack direction="row">
           <Button
             type="submit"

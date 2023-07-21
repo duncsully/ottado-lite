@@ -8,11 +8,11 @@ export class OttaDoDB extends Dexie {
 
   constructor() {
     super('OttaDoDB')
-    this.version(6)
+    this.version(8)
       .stores({
         concerns: '++id, createdAt',
         nextActions:
-          '++id, createdAt, minutesEstimate, effort, priority, *tags, completedAt, concernId',
+          '++id, title, createdAt, minutesEstimate, effort, priority, *tags, completedAt, concernId',
         tags: '++id, name, category, usedCount, filteredCount',
       })
       .upgrade(async (tx) => {
@@ -21,6 +21,14 @@ export class OttaDoDB extends Dexie {
           .toCollection()
           .modify((tag) => {
             tag.filteredCount = 0
+          })
+      })
+      .upgrade(async (tx) => {
+        return tx
+          .table('nextActions')
+          .toCollection()
+          .modify((na) => {
+            na.dependencies = []
           })
       })
   }

@@ -46,7 +46,18 @@ const effortOptions: Option<number>[] = Object.entries(Effort).reduce(
 
 export const NextActionsPage = () => {
   const allUncompletedNextActions = useLiveQuery(() =>
-    db.nextActions.where('completedAt').equals(0).toArray()
+    db.nextActions
+      .where('completedAt')
+      .equals(0)
+      .toArray()
+      // TODO: Optimize this
+      .then((actions) =>
+        actions.filter((action) =>
+          action.dependencies.every((dependency) =>
+            actions.every((a) => a.id !== dependency)
+          )
+        )
+      )
   )
 
   // --------------------------------------------------------------------------

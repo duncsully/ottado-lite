@@ -11,6 +11,7 @@ import {
   Typography,
 } from '@mui/material'
 import {
+  DoNotDisturb,
   FilterList,
   Help,
   ImportExport,
@@ -183,6 +184,20 @@ export const releaseNotes: readonly ReleaseNote[] = [
           The tag filter chips at the top of the Next Actions page have been
           improved! Now your top five most <em>filtered by</em> tags will be
           shown (as opposed to top five most used tags).
+        </Typography>
+      </>
+    ),
+  },
+  {
+    title: 'Prerequisites',
+    date: '2023/07/21',
+    icon: <DoNotDisturb />,
+    content: (
+      <>
+        <Typography>
+          You can now add prerequisites to your next actions! These actions
+          won't show up in your next actions list until their prerequisites are
+          completed.
         </Typography>
       </>
     ),
