@@ -229,6 +229,9 @@ export const NextActionForm: FC<{
               {...params}
               variant="filled"
               label="Tags"
+              // Needed to show enter key on Android
+              multiline
+              rows={1}
               InputProps={{
                 ...params.InputProps,
                 startAdornment: (
