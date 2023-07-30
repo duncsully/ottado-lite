@@ -3,6 +3,7 @@ import {
   Badge,
   BottomNavigation,
   BottomNavigationAction,
+  BottomNavigationActionProps,
   Box,
   Divider,
   IconButton,
@@ -24,9 +25,7 @@ import {
   Search,
 } from '@mui/icons-material'
 import { DefaultOtto } from '../Otto/DefaultOtto'
-import { useEffect, useState, type FC } from 'react'
-import { ConcernsPage } from '../ConcernsPage/ConcernsPage'
-import { NextActionsPage } from '../NextActionsPage/NextActionsPage'
+import { useState, type FC, forwardRef } from 'react'
 import { HelpDialog } from '../HelpDialog/HelpDialog'
 import {
   ReleaseNotesDialog,
@@ -37,19 +36,7 @@ import { ImportExportDialog } from '../ImportExportDialog/ImportExportDialog'
 import { SearchNextActionsDialog } from '../SearchNextActionsDialog/SearchNextActionsDialog'
 import { EditActionDialog } from '../EditActionDialog/EditActionDialog'
 import { type NextAction } from '../../types'
-
-const getPageFromHash = () => {
-  const pages = {
-    '#next-actions': <NextActionsPage />,
-    '#concerns': <ConcernsPage />,
-  } as { [key: string]: JSX.Element }
-  const page = pages[window.location.hash]
-  if (!page) {
-    location.hash = '#next-actions'
-    return pages['#next-actions']
-  }
-  return page
-}
+import { Link, Outlet, useLocation } from 'react-router-dom'
 
 export const HomeLayout: FC = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
@@ -57,17 +44,7 @@ export const HomeLayout: FC = () => {
     setAnchorEl(null)
   }
 
-  const [page, setPage] = useState(getPageFromHash())
-
-  useEffect(() => {
-    const hashChangeHandler = () => {
-      setPage(getPageFromHash())
-    }
-    window.addEventListener('hashchange', hashChangeHandler)
-    return () => {
-      window.removeEventListener('hashchange', hashChangeHandler)
-    }
-  }, [])
+  const tabId = useLocation().pathname
 
   const [helpDialogOpen, setHelpDialogOpen] = useState(false)
 
@@ -112,7 +89,7 @@ export const HomeLayout: FC = () => {
                 OttaDo
               </Typography>
               {/* TODO: Improve logic for dynamic app bar */}
-              {location.hash === '#next-actions' && (
+              {tabId === '/next-actions' && (
                 <IconButton onClick={() => setSearchDialogOpen(true)}>
                   <Search />
                 </IconButton>
@@ -176,25 +153,25 @@ export const HomeLayout: FC = () => {
           </AppBar>
         </Box>
         <Box sx={{ p: 2, pb: 1, mb: 8, flexGrow: 2, overflow: 'auto' }}>
-          {page}
+          <Outlet />
         </Box>
 
         <Paper
           sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 10 }}
           elevation={3}
         >
-          <BottomNavigation showLabels value={window.location.hash}>
-            <BottomNavigationAction
+          <BottomNavigation showLabels value={tabId}>
+            <BottomNavigationActionLink
               label="Next Actions"
               icon={<Checklist />}
-              href="#next-actions"
-              value="#next-actions"
+              to="/next-actions"
+              value="/next-actions"
             />
-            <BottomNavigationAction
+            <BottomNavigationActionLink
               label="Concerns"
               icon={<Lightbulb />}
-              href="#concerns"
-              value="#concerns"
+              to="/concerns"
+              value="/concerns"
             />
           </BottomNavigation>
         </Paper>
@@ -225,3 +202,16 @@ export const HomeLayout: FC = () => {
     </>
   )
 }
+
+// TODO: value doesn't seem to be working
+const BottomNavigationActionLink: FC<
+  BottomNavigationActionProps<'a'> & { to: string }
+> = forwardRef(({ to, ...props }, ref) => (
+  <BottomNavigationAction
+    ref={ref}
+    component={Link}
+    to={to}
+    value={to}
+    {...props}
+  />
+))
