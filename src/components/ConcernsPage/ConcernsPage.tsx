@@ -14,7 +14,6 @@ import { db } from '../../db'
 import { Add, Create } from '@mui/icons-material'
 import { OttoMessage } from '../OttoMessage/OttoMessage'
 import { ConcernItem } from '../ConcernItem/ConcernItem'
-import { DefineDialog } from '../DefineDialog/DefineDialog'
 
 /*
 TODO:
@@ -42,8 +41,6 @@ export const ConcernsPage: FC = () => {
       await db.concerns.update(id, { text: newValue })
     }
   }
-
-  const [defineDialogOpen, setDefineDialogOpen] = useState(false)
 
   if (!concerns) return null
 
@@ -101,17 +98,14 @@ export const ConcernsPage: FC = () => {
             <Fab
               color="primary"
               sx={{ borderRadius: '16px' }}
-              onClick={() => setDefineDialogOpen(true)}
+              component="a"
+              href="#define"
             >
               <Create />
             </Fab>
           </Zoom>
         </Stack>
       </Stack>
-      <DefineDialog
-        open={defineDialogOpen}
-        onClose={() => setDefineDialogOpen(false)}
-      />
     </>
   )
 }

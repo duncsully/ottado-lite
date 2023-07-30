@@ -35,6 +35,7 @@ import { useReadReleaseNotes } from '../../utils/makeUseLocalStorage'
 import { ImportExportDialog } from '../ImportExportDialog/ImportExportDialog'
 import { SearchNextActionsDialog } from '../SearchNextActionsDialog/SearchNextActionsDialog'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { DefineDialog } from '../DefineDialog/DefineDialog'
 
 export const HomeLayout: FC = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
@@ -48,8 +49,6 @@ export const HomeLayout: FC = () => {
 
   const [readReleaseNotes] = useReadReleaseNotes()
   const unreadReleaseNotes = releaseNotes.length - readReleaseNotes.length
-
-  const back = state?.back
 
   return (
     <>
@@ -174,11 +173,17 @@ export const HomeLayout: FC = () => {
       <ImportExportDialog open={hash == '#import-export'} onClose={goBack} />
       <HelpDialog open={hash === '#help'} onClose={goBack} />
       <SearchNextActionsDialog
-        open={hash === '#search-next-actions' || back}
+        open={hash === '#search-next-actions' || state?.referrer === 'search'}
         onClose={goBack}
         onClickNextAction={(nextAction) => {
-          navigate(`/next-actions/${nextAction.id}`, { state: { back: true } })
+          navigate(`/next-actions/${nextAction.id}`, {
+            state: { referrer: 'search' },
+          })
         }}
+      />
+      <DefineDialog
+        open={hash === '#define' || state?.referrer === 'define'}
+        onClose={() => navigate(-1)}
       />
     </>
   )

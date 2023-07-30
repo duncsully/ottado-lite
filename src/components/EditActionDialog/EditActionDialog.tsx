@@ -28,7 +28,7 @@ export const EditActionDialog: FC<{
     setAnchorEl(null)
   }
 
-  const back = useLocation().state?.back
+  const referrer = useLocation().state?.referrer
 
   const action = useLiveQuery(
     () => (actionId ? db.nextActions.get(actionId) : undefined),
@@ -73,7 +73,7 @@ export const EditActionDialog: FC<{
       <FullscreenDialog
         open={!!action}
         onClose={onClose}
-        back={back}
+        back={!!referrer}
         title="Edit next action"
         toolbarActions={
           <>

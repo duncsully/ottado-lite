@@ -25,7 +25,7 @@ import { HappyOtto } from '../Otto/HappyOtto'
 import { Transition } from '../FullscreenDialogTransition/FullScreenDialogTransition'
 import { OttoMessage } from '../OttoMessage/OttoMessage'
 import { NextActionItem } from '../NextActionItem/NextActionItem'
-import { EditActionDialog } from '../EditActionDialog/EditActionDialog'
+import { useNavigate } from 'react-router-dom'
 
 export const DefineDialog: FC<{ open: boolean; onClose(): void }> = ({
   open,
@@ -85,9 +85,8 @@ export const DefineDialog: FC<{ open: boolean; onClose(): void }> = ({
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
   const [defining, setDefining] = useState<boolean>(false)
-  const [editingAction, setEditingAction] = useState<NextAction | undefined>(
-    undefined
-  )
+
+  const navigate = useNavigate()
 
   return (
     <>
@@ -169,7 +168,11 @@ export const DefineDialog: FC<{ open: boolean; onClose(): void }> = ({
                         <NextActionItem
                           key={nextAction.id}
                           nextAction={nextAction}
-                          onClick={() => setEditingAction(nextAction)}
+                          onClick={() =>
+                            navigate(`/next-actions/${nextAction.id}`, {
+                              state: { referrer: 'define' },
+                            })
+                          }
                         />
                       ))}
                     </List>
@@ -225,10 +228,6 @@ export const DefineDialog: FC<{ open: boolean; onClose(): void }> = ({
           </Button>
         </DialogActions>
       </Dialog>
-      <EditActionDialog
-        action={editingAction}
-        onClose={() => setEditingAction(undefined)}
-      />
     </>
   )
 }
