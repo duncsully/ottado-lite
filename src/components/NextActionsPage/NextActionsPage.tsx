@@ -28,6 +28,7 @@ import { EditActionDialog } from '../EditActionDialog/EditActionDialog'
 import { OttoMessage } from '../OttoMessage/OttoMessage'
 import { ConcernedOtto } from '../Otto/ConcernedOtto'
 import { AddActionDialog } from '../AddActionDialog.tsx/AddActionDialog'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 
 // TODO: Transitions?
 // TODO: Advanced tag filtering? (All of, Any of, Not, etc.)
@@ -59,6 +60,8 @@ export const NextActionsPage = () => {
         )
       )
   )
+
+  const navigate = useNavigate()
 
   // --------------------------------------------------------------------------
   // Tag dialog
@@ -249,12 +252,6 @@ export const NextActionsPage = () => {
     )
   }, [allUncompletedNextActions, timeEstimate, effort, selectedTags])
 
-  const handleToggle = (nextAction: NextAction) => {
-    db.nextActions.update(nextAction.id!, {
-      completedAt: nextAction.completedAt ? 0 : Date.now(),
-    })
-  }
-
   const [showAll, setShowAll] = useState(false)
   const [showingIndex, setShowingIndex] = useState(0)
 
@@ -285,7 +282,7 @@ export const NextActionsPage = () => {
             key={nextAction.id}
             nextAction={nextAction}
             showCheckbox
-            onClick={() => setViewingAction(nextAction)}
+            onClick={() => navigate(nextAction.id + '')}
           />
         ))}
       </List>
@@ -309,14 +306,12 @@ export const NextActionsPage = () => {
   // View next action
   // --------------------------------------------------------------------------
 
-  const [viewingAction, setViewingAction] = useState<NextAction | undefined>(
-    undefined
-  )
+  const actionId = useParams().id
 
   const viewNextActionComponent = (
     <EditActionDialog
-      action={viewingAction}
-      onClose={() => setViewingAction(undefined)}
+      actionId={actionId ? +actionId : undefined}
+      onClose={() => navigate(-1)}
     />
   )
 
@@ -363,7 +358,7 @@ export const NextActionsPage = () => {
                 key={nextAction.id}
                 nextAction={nextAction}
                 showCheckbox
-                onClick={() => setViewingAction(nextAction)}
+                onClick={() => navigate(nextAction.id + '')}
               />
             ))}
           </List>
@@ -376,12 +371,9 @@ export const NextActionsPage = () => {
   // --------------------------------------------------------------------------
   // Quick add dialog
   // --------------------------------------------------------------------------
-  const [addDialogOpen, setAddDialogOpen] = useState(false)
+  const isAdd = useLocation().pathname.split('/').at(-1) === 'add'
   const addDialogComponent = (
-    <AddActionDialog
-      open={addDialogOpen}
-      onClose={() => setAddDialogOpen(false)}
-    />
+    <AddActionDialog open={isAdd} onClose={() => navigate(-1)} />
   )
 
   // --------------------------------------------------------------------------
@@ -429,7 +421,8 @@ export const NextActionsPage = () => {
             bottom: 72,
             right: 16,
           }}
-          onClick={() => setAddDialogOpen(true)}
+          component={Link}
+          to="add"
         >
           <Add />
         </Fab>

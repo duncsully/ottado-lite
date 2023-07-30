@@ -12,6 +12,7 @@ const router = createBrowserRouter([
       {
         path: 'next-actions',
         element: <NextActionsPage />,
+        children: [{ path: ':id' }, { path: 'new' }],
       },
       { path: 'concerns', element: <ConcernsPage /> },
     ],

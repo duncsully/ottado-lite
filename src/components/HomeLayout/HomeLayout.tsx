@@ -34,9 +34,7 @@ import {
 import { useReadReleaseNotes } from '../../utils/makeUseLocalStorage'
 import { ImportExportDialog } from '../ImportExportDialog/ImportExportDialog'
 import { SearchNextActionsDialog } from '../SearchNextActionsDialog/SearchNextActionsDialog'
-import { EditActionDialog } from '../EditActionDialog/EditActionDialog'
-import { type NextAction } from '../../types'
-import { Link, Outlet, useLocation } from 'react-router-dom'
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 
 export const HomeLayout: FC = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
@@ -44,21 +42,14 @@ export const HomeLayout: FC = () => {
     setAnchorEl(null)
   }
 
-  const tabId = useLocation().pathname
-
-  const [helpDialogOpen, setHelpDialogOpen] = useState(false)
-
-  const [importExportDialogOpen, setImportExportDialogOpen] = useState(false)
+  const { pathname: tabId, hash, state } = useLocation()
+  const navigate = useNavigate()
+  const goBack = () => navigate(-1)
 
   const [readReleaseNotes] = useReadReleaseNotes()
   const unreadReleaseNotes = releaseNotes.length - readReleaseNotes.length
-  const [releaseNotesDialogOpen, setReleaseNotesDialogOpen] = useState(false)
 
-  const [searchDialogOpen, setSearchDialogOpen] = useState(false)
-
-  const [viewingAction, setViewingAction] = useState<NextAction | undefined>(
-    undefined
-  )
+  const back = state?.back
 
   return (
     <>
@@ -90,11 +81,11 @@ export const HomeLayout: FC = () => {
               </Typography>
               {/* TODO: Improve logic for dynamic app bar */}
               {tabId === '/next-actions' && (
-                <IconButton onClick={() => setSearchDialogOpen(true)}>
+                <IconButton href="#search-next-actions">
                   <Search />
                 </IconButton>
               )}
-              <IconButton onClick={() => setReleaseNotesDialogOpen(true)}>
+              <IconButton href="#whats-new">
                 <Badge badgeContent={unreadReleaseNotes} color="primary">
                   <Notifications />
                 </Badge>
@@ -125,8 +116,9 @@ export const HomeLayout: FC = () => {
                   onClose={handleClose}
                 >
                   <MenuItem
+                    href="#import-export"
+                    component="a"
                     onClick={() => {
-                      setImportExportDialogOpen(true)
                       setAnchorEl(null)
                     }}
                   >
@@ -137,8 +129,9 @@ export const HomeLayout: FC = () => {
                   </MenuItem>
                   <Divider />
                   <MenuItem
+                    href="#help"
+                    component="a"
                     onClick={() => {
-                      setHelpDialogOpen(true)
                       setAnchorEl(null)
                     }}
                   >
@@ -177,39 +170,28 @@ export const HomeLayout: FC = () => {
         </Paper>
       </Paper>
 
-      <ReleaseNotesDialog
-        open={releaseNotesDialogOpen}
-        onClose={() => setReleaseNotesDialogOpen(false)}
-      />
-      <ImportExportDialog
-        open={importExportDialogOpen}
-        onClose={() => setImportExportDialogOpen(false)}
-      />
-      <HelpDialog
-        open={helpDialogOpen}
-        onClose={() => setHelpDialogOpen(false)}
-      />
+      <ReleaseNotesDialog open={hash === '#whats-new'} onClose={goBack} />
+      <ImportExportDialog open={hash == '#import-export'} onClose={goBack} />
+      <HelpDialog open={hash === '#help'} onClose={goBack} />
       <SearchNextActionsDialog
-        open={searchDialogOpen}
-        onClose={() => setSearchDialogOpen(false)}
-        onClickNextAction={setViewingAction}
-      />
-      <EditActionDialog
-        action={viewingAction}
-        onClose={() => setViewingAction(undefined)}
-        back
+        open={hash === '#search-next-actions' || back}
+        onClose={goBack}
+        onClickNextAction={(nextAction) => {
+          navigate(`/next-actions/${nextAction.id}`, { state: { back: true } })
+        }}
       />
     </>
   )
 }
 
-// TODO: value doesn't seem to be working
+// TODO: `value` from `to` doesn't seem to be working, need to pass directly as a prop
 const BottomNavigationActionLink: FC<
   BottomNavigationActionProps<'a'> & { to: string }
 > = forwardRef(({ to, ...props }, ref) => (
   <BottomNavigationAction
     ref={ref}
     component={Link}
+    replace
     to={to}
     value={to}
     {...props}

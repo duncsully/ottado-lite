@@ -16,16 +16,24 @@ import { db } from '../../db'
 import { NextAction } from '../../types'
 import { NextActionForm } from '../NextActionForm/NextActionForm'
 import { FullscreenDialog } from '../FullscreenDialog/FullscreenDialog'
+import { useLiveQuery } from 'dexie-react-hooks'
+import { useLocation } from 'react-router-dom'
 
 export const EditActionDialog: FC<{
-  action?: NextAction
+  actionId?: number
   onClose(): void
-  back?: boolean
-}> = ({ action, onClose, back }) => {
+}> = ({ actionId, onClose }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const handleClose = () => {
     setAnchorEl(null)
   }
+
+  const back = useLocation().state?.back
+
+  const action = useLiveQuery(
+    () => (actionId ? db.nextActions.get(actionId) : undefined),
+    [actionId]
+  )
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const handleDelete = () => {
