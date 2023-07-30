@@ -3,7 +3,7 @@ import { FullscreenDialog } from '../FullscreenDialog/FullscreenDialog'
 import {
   Box,
   List,
-  ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
   Stack,
@@ -39,7 +39,7 @@ export const HelpDialog: FC<{ open: boolean; onClose(): void }> = ({
             </Typography>
             <List>
               {Object.entries(helpTopics).map(([title, content]) => (
-                <ListItem
+                <ListItemButton
                   key={title}
                   onClick={() => setSelectedTopic(title as HelpTopic)}
                 >
@@ -47,7 +47,7 @@ export const HelpDialog: FC<{ open: boolean; onClose(): void }> = ({
                     <Help />
                   </ListItemIcon>
                   <ListItemText primary={title} />
-                </ListItem>
+                </ListItemButton>
               ))}
             </List>
           </>

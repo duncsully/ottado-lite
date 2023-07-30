@@ -4,7 +4,7 @@ import {
   Badge,
   Button,
   List,
-  ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
   Stack,
@@ -56,7 +56,7 @@ export const ReleaseNotesDialog: FC<{ open: boolean; onClose(): void }> = ({
             {releaseNotes.reduceRight(
               (results, note, i) =>
                 results.concat(
-                  <ListItem
+                  <ListItemButton
                     disableGutters
                     key={note.title}
                     onClick={() => {
@@ -79,7 +79,7 @@ export const ReleaseNotesDialog: FC<{ open: boolean; onClose(): void }> = ({
                       primary={note.title}
                       secondary={new Date(note.date).toLocaleDateString()}
                     />
-                  </ListItem>
+                  </ListItemButton>
                 ),
               [] as React.ReactNode[]
             )}
