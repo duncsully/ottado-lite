@@ -25,7 +25,7 @@ import { HappyOtto } from '../Otto/HappyOtto'
 import { Transition } from '../FullscreenDialogTransition/FullScreenDialogTransition'
 import { OttoMessage } from '../OttoMessage/OttoMessage'
 import { NextActionItem } from '../NextActionItem/NextActionItem'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 export const DefineDialog: FC<{ open: boolean; onClose(): void }> = ({
   open,
@@ -203,7 +203,7 @@ export const DefineDialog: FC<{ open: boolean; onClose(): void }> = ({
                 title="All done!"
                 message="No more concerns to define"
               />
-              <Button href="#next-actions" onClick={onClose}>
+              <Button component={Link} to="next-actions">
                 View next actions
               </Button>
             </>
