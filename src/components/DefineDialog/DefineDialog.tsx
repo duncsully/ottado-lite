@@ -59,21 +59,7 @@ export const DefineDialog: FC<{ open: boolean; onClose(): void }> = ({
 
   const handleSubmit = async (nextAction: NextAction) => {
     if (!topConcern) return
-    db.transaction('rw', db.nextActions, db.concerns, db.tags, async () => {
-      const tagUpdates = nextAction.tags.map((tag) => {
-        const query = db.tags.where('name').equals(tag)
-        return query.count((count) => {
-          if (count === 0) {
-            return db.tags.add({ name: tag, usedCount: 1, filteredCount: 0 })
-          }
-          return query.modify({ usedCount: count + 1 })
-        })
-      })
-      return Promise.all([
-        ...tagUpdates,
-        db.nextActions.add({ ...nextAction, concernId: topConcern?.id }),
-      ])
-    })
+    await db.nextActions.add({ ...nextAction, concernId: topConcern?.id })
     setDefining(false)
   }
 
