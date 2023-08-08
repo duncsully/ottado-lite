@@ -18,18 +18,7 @@ export const AddActionDialog: FC<{ open: boolean; onClose(): void }> = ({
   onClose,
 }) => {
   const handleSubmit = async (nextAction: NextAction) => {
-    db.transaction('rw', db.nextActions, db.concerns, db.tags, async () => {
-      const tagUpdates = nextAction.tags.map((tag) => {
-        const query = db.tags.where('name').equals(tag)
-        return query.count((count) => {
-          if (count === 0) {
-            return db.tags.add({ name: tag, usedCount: 1, filteredCount: 0 })
-          }
-          return query.modify({ usedCount: count + 1 })
-        })
-      })
-      return Promise.all([...tagUpdates, db.nextActions.add(nextAction)])
-    })
+    await db.nextActions.add(nextAction)
     onClose()
   }
 

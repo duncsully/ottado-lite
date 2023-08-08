@@ -43,28 +43,10 @@ export const EditActionDialog: FC<{
     onClose()
   }
 
+  // TODO: Move logic into NextActionForm (or into classes and services?)
   const handleSubmit = async (nextAction: NextAction) => {
     if (!action) return
-    const previousTags = action.tags
-    db.transaction('rw', db.nextActions, db.tags, async () => {
-      const tagUpdates = nextAction.tags
-        .filter((tag) => !previousTags.includes(tag))
-        .map((tag) => {
-          const query = db.tags.where('name').equals(tag)
-          return query.count((count) => {
-            if (count === 0) {
-              return db.tags.add({ name: tag, usedCount: 1, filteredCount: 0 })
-            }
-            return query.modify((currentTag) => {
-              currentTag.usedCount++
-            })
-          })
-        })
-      return Promise.all([
-        ...tagUpdates,
-        db.nextActions.update(action.id!, nextAction),
-      ])
-    })
+    await db.nextActions.update(action.id!, nextAction)
     onClose()
   }
 

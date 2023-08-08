@@ -2,7 +2,6 @@ import {
   Autocomplete,
   Button,
   InputAdornment,
-  ListSubheader,
   MenuItem,
   Stack,
   TextField,
@@ -12,9 +11,9 @@ import {
   useState,
   type ReactNode,
   type FC,
-  useMemo,
+  useEffect,
 } from 'react'
-import { Effort, NextAction, Priority } from '../../types'
+import { Effort, NextAction, Priority, Tag } from '../../types'
 import {
   Notes,
   Schedule,
@@ -67,7 +66,10 @@ export const NextActionForm: FC<{
 }> = ({ existingAction, onSubmit }) => {
   const tags = useLiveQuery(() => db.tags.toArray())
 
-  const handleTagChange = (_: React.SyntheticEvent, value: string[]) => {
+  const handleTagChange = (
+    _: React.SyntheticEvent,
+    value: Array<Tag | string>
+  ) => {
     setSelectedTags(value)
   }
 
@@ -82,9 +84,17 @@ export const NextActionForm: FC<{
   const [priority, setPriority] = useState(
     existingAction?.priority ?? Priority.Lowest
   )
-  const [selectedTags, setSelectedTags] = useState(
-    existingAction?.tags ?? ([] as string[])
-  )
+  const [selectedTags, setSelectedTags] = useState<Array<Tag | string>>([])
+
+  useEffect(() => {
+    setSelectedTags(
+      tags
+        ? existingAction?.tags.map(
+            (tagId) => tags?.find((tag) => tag.id === tagId)!
+          ) ?? []
+        : []
+    )
+  }, [tags])
 
   const incompleteNextActions = useLiveQuery(() =>
     db.nextActions.where('completedAt').equals(0).toArray()
@@ -101,26 +111,49 @@ export const NextActionForm: FC<{
     existingAction?.effort !== effort ||
     existingAction?.priority !== priority ||
     existingAction?.tags.length !== selectedTags.length ||
-    existingAction?.tags.some((tag, i) => tag !== selectedTags[i]) ||
+    existingAction?.tags.some((tag, i) => {
+      const selectedTag = selectedTags[i]
+      typeof selectedTag === 'string' || tag !== selectedTag?.id
+    }) ||
     existingAction?.dependencies.length !== dependencies.length ||
     existingAction?.dependencies.some((dep, i) => dep !== dependencies[i])
 
   const canSubmit = !!actionTitle.trim() && (!existingAction || isDirty)
 
-  const handleSubmit: FormEventHandler = (e) => {
+  const handleSubmit: FormEventHandler = async (e) => {
     e.preventDefault()
+
+    const newTagIds: number[] = []
+
+    for (const tag of selectedTags) {
+      if (typeof tag === 'string') {
+        const id = await db.tags.add({
+          name: tag,
+          usedCount: 1,
+          filteredCount: 0,
+        })
+        newTagIds.push(id)
+      } else {
+        newTagIds.push(tag.id!)
+        if (!existingAction?.tags.includes(tag.id!)) {
+          db.tags.update(tag.id!, { usedCount: tag.usedCount + 1 })
+        }
+      }
+    }
+
     onSubmit({
       title: actionTitle.trim(),
       description,
       minutesEstimate,
       effort,
       priority,
-      tags: selectedTags,
+      tags: newTagIds,
       createdAt: existingAction?.createdAt ?? Date.now(),
       completedAt: existingAction?.completedAt ?? 0,
       dependencies,
     })
   }
+
   return (
     <form onSubmit={handleSubmit}>
       <Stack gap="1rem">
@@ -215,7 +248,9 @@ export const NextActionForm: FC<{
         <Autocomplete
           value={selectedTags}
           onChange={handleTagChange}
-          options={tags?.map((tag) => tag.name) ?? ([] as string[])}
+          options={tags ?? ([] as Tag[])}
+          getOptionLabel={(tag) => (typeof tag === 'string' ? tag : tag.name)}
+          isOptionEqualToValue={(tag, value) => tag?.id === value?.id}
           loading={!tags}
           size="small"
           fullWidth

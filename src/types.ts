@@ -12,7 +12,8 @@ export interface NextAction {
   minutesEstimate?: number
   effort: Effort
   priority: Priority
-  tags: string[]
+  // Tag Ids
+  tags: number[]
   completedAt?: number
   // Concern may be deleted, but we track the originating concern ID
   concernId?: number

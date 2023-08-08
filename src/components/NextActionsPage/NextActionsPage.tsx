@@ -231,7 +231,7 @@ export const NextActionsPage = () => {
 
           const hasSomeMatchingTags =
             !selectedTags.length ||
-            selectedTags.some((tag) => nextAction.tags?.includes(tag.name))
+            selectedTags.some((tag) => nextAction.tags?.includes(tag.id!))
 
           return withinMinutes && withinEffort && hasSomeMatchingTags
         })
@@ -433,7 +433,7 @@ export const NextActionsPage = () => {
 
 const countMatchingTags = (nextAction: NextAction, selectedTags: Tag[]) => {
   return nextAction.tags.reduce((count, tag) => {
-    if (selectedTags.some((selectedTag) => selectedTag.name === tag)) {
+    if (selectedTags.some((selectedTag) => selectedTag.id! === tag)) {
       return count + 1
     }
     return count
