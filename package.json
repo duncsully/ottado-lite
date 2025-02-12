@@ -30,6 +30,6 @@
     "prettier": "^2.8.4",
     "typescript": "^5.0.2",
     "vite": "^4.5.5",
-    "vite-plugin-pwa": "^0.14.4"
+    "vite-plugin-pwa": "^0.21.1"
   }
 }
